@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import watermelonImg from "@/assets/watermelon-promo.png";
 import papayaImg from "@/assets/papaya-promo.png";
@@ -68,6 +68,32 @@ const banners = [
 
 const PromoCarousel = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const handleScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const scrollLeft = el.scrollLeft;
+    const itemWidth = el.firstElementChild?.clientWidth ?? 1;
+    const gap = 12;
+    const index = Math.round(scrollLeft / (itemWidth + gap));
+    setActiveIndex(Math.min(index, banners.length - 1));
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  const scrollTo = (index: number) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const itemWidth = el.firstElementChild?.clientWidth ?? 0;
+    const gap = 12;
+    el.scrollTo({ left: index * (itemWidth + gap), behavior: "smooth" });
+  };
 
   return (
     <div className="relative">
@@ -75,7 +101,7 @@ const PromoCarousel = () => {
         ref={scrollRef}
         className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1"
       >
-        {banners.map((banner) => {
+        {banners.map((banner, i) => {
           const isLight = !!banner.titleColor;
           return (
             <Link
@@ -101,13 +127,28 @@ const PromoCarousel = () => {
                 src={banner.image}
                 alt=""
                 className="w-36 md:w-44 h-36 md:h-44 object-contain -mr-2 -mb-4 -mt-2 relative z-10 drop-shadow-lg"
-                loading="lazy"
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
                 width={512}
                 height={512}
               />
             </Link>
           );
         })}
+      </div>
+
+      {/* Scroll indicator dots */}
+      <div className="flex justify-center gap-1.5 mt-3">
+        {banners.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => scrollTo(i)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              i === activeIndex ? "w-6 bg-foreground" : "w-1.5 bg-foreground/20"
+            }`}
+            aria-label={`Bannière ${i + 1}`}
+          />
+        ))}
       </div>
     </div>
   );
