@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState, useCallback } from "react";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import ProductCard from "@/components/ProductCard";
@@ -217,6 +218,10 @@ const ProductDetail = () => {
         shopId: product.shop_id,
       });
     }
+    toast.success(`${product.name} ajouté au panier`, {
+      description: `${quantity} × ${formatPrice(product.price)}`,
+      icon: "🧺",
+    });
   }, [product, quantity, images, sellerProfile, shop, addItem]);
 
   const handleAddRelated = (p: Product, e: React.MouseEvent) => {
@@ -232,6 +237,7 @@ const ProductDetail = () => {
       farmer: "Producteur",
       shopId: p.shop_id,
     });
+    toast.success(`${p.name} ajouté au panier`, { icon: "🧺" });
   };
 
   if (loading) {

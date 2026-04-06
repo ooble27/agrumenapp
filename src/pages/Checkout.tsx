@@ -8,7 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+
 
 const Checkout = () => {
   const { user, loading: authLoading } = useAuth();
@@ -152,7 +152,7 @@ const Checkout = () => {
           </div>
         </motion.div>
       </main>
-      <Footer />
+      
     </div>
   );
 };
