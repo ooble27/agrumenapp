@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import ProductCard from "@/components/ProductCard";
+import { findMockProduct, getMockRelatedProducts } from "@/data/marketplaceMocks";
 import type { Product as BaseProduct, ProductImage } from "@/types/database";
 
 type Product = BaseProduct & {
@@ -43,10 +44,29 @@ const ProductDetail = () => {
 
   useEffect(() => {
     if (!id) return;
+
+    setLoading(true);
     setQuantity(1);
     setCurrentImage(0);
+    setProduct(null);
+    setShop(null);
+    setImages([]);
+    setRelated([]);
+    setSellerProfile(null);
 
     const load = async () => {
+      const mockProduct = findMockProduct(id);
+
+      if (mockProduct) {
+        setProduct(mockProduct);
+        setShop(mockProduct.mockShop);
+        setSellerProfile(mockProduct.mockSellerProfile);
+        setImages(mockProduct.mockImages.length > 0 ? mockProduct.mockImages : mockProduct.image_url ? [mockProduct.image_url] : []);
+        setRelated(getMockRelatedProducts(mockProduct));
+        setLoading(false);
+        return;
+      }
+
       const { data } = await supabase
         .from("products")
         .select("*, categories(name, icon)")
@@ -142,7 +162,10 @@ const ProductDetail = () => {
     );
   }
 
+  const isMockProduct = product.id.startsWith("m");
   const handleAddToCart = () => {
+    if (isMockProduct) return;
+
     for (let i = 0; i < quantity; i++) {
       addItem({
         id: product.id,
@@ -160,6 +183,8 @@ const ProductDetail = () => {
   const handleAddRelated = (p: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (p.id.startsWith("m")) return;
+
     addItem({
       id: p.id,
       name: p.name,
@@ -246,6 +271,11 @@ const ProductDetail = () => {
               {product.name}
             </h1>
             <p className="text-xs text-on-surface-variant mt-0.5">{product.unit}</p>
+            {isMockProduct && (
+              <p className="text-xs text-on-surface-variant mt-2">
+                Fiche de démonstration pour valider le design avant l’import du vrai catalogue.
+              </p>
+            )}
 
             <div className="mt-2">
               <span className="text-xl font-headline font-extrabold">{formatPrice(product.price)}</span>
@@ -323,10 +353,10 @@ const ProductDetail = () => {
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border/30 px-5 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
             <button
               onClick={handleAddToCart}
-              disabled={product.stock <= 0}
+              disabled={product.stock <= 0 || isMockProduct}
               className="w-full bg-foreground text-background py-4 rounded-xl font-headline font-extrabold text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-50"
             >
-              Ajouter {quantity > 1 ? `${quantity}` : "1"} au panier · {formatPrice(totalPrice)}
+              {isMockProduct ? "Produit démo · bientôt disponible" : `Ajouter ${quantity > 1 ? `${quantity}` : "1"} au panier · ${formatPrice(totalPrice)}`}
             </button>
           </div>
         </div>
@@ -392,6 +422,12 @@ const ProductDetail = () => {
 
                 <h1 className="text-4xl md:text-5xl font-headline font-extrabold tracking-tighter mb-4">{product.name}</h1>
 
+                {isMockProduct && (
+                  <p className="text-sm text-on-surface-variant font-body leading-relaxed mb-4">
+                    Fiche de démonstration pour valider le design avant l’import du vrai catalogue.
+                  </p>
+                )}
+
                 {product.description && (
                   <p className="text-lg text-on-surface-variant font-body leading-relaxed mb-6">{product.description}</p>
                 )}
@@ -416,10 +452,10 @@ const ProductDetail = () => {
                   </div>
                   <button
                     onClick={handleAddToCart}
-                    disabled={product.stock <= 0}
+                     disabled={product.stock <= 0 || isMockProduct}
                     className="flex-1 bg-foreground text-background px-8 py-4 rounded-xl font-headline font-extrabold text-base flex items-center justify-center gap-3 hover:scale-[0.98] transition-transform disabled:opacity-50"
                   >
-                    Ajouter au panier · {formatPrice(totalPrice)}
+                     {isMockProduct ? "Produit démo · bientôt disponible" : `Ajouter au panier · ${formatPrice(totalPrice)}`}
                   </button>
                 </div>
 

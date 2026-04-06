@@ -4,15 +4,8 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { AnimatePresence, motion } from "framer-motion";
+import { buildMarketCategories } from "@/data/marketplaceMocks";
 import type { Category } from "@/types/database";
-
-const FALLBACK_CATEGORIES: { name: string; icon: string; id: string }[] = [
-  { id: "fruits", name: "Fruits", icon: "nutrition" },
-  { id: "legumes", name: "Légumes", icon: "eco" },
-  { id: "cereales", name: "Céréales", icon: "grain" },
-  { id: "tubercules", name: "Tubercules", icon: "spa" },
-  { id: "epices", name: "Épices", icon: "local_fire_department" },
-];
 
 const Navbar = () => {
   const { totalItems, setIsOpen } = useCart();
@@ -34,7 +27,7 @@ const Navbar = () => {
     });
   }, []);
 
-  const displayCategories = categories.length > 0 ? categories : FALLBACK_CATEGORIES as Category[];
+  const displayCategories = buildMarketCategories(categories);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -49,7 +42,7 @@ const Navbar = () => {
     setMobileOpen(false);
     setProfileOpen(false);
     setMarcheOpen(false);
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   const accountPath = role === "seller" ? "/dashboard" : "/mon-compte";
 
@@ -75,7 +68,7 @@ const Navbar = () => {
               onMouseLeave={handleMarcheLeave}
             >
               <button
-                className={`flex items-center gap-1 px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                className={`flex items-center gap-1 px-3.5 py-2 rounded-md text-[13px] font-medium transition-all duration-150 ${
                   isActive("/marche") || marcheOpen
                     ? "text-foreground bg-surface-container"
                     : "text-on-surface-variant hover:text-foreground hover:bg-surface-container/50"
@@ -98,7 +91,7 @@ const Navbar = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 6, scale: 0.98 }}
                     transition={{ duration: 0.15, ease: "easeOut" }}
-                    className="absolute left-0 top-full mt-2 bg-background rounded-2xl border border-border/40 shadow-[0_16px_48px_rgba(0,0,0,0.12)] overflow-hidden z-50"
+                     className="absolute left-0 top-full mt-2 bg-background rounded-xl border border-border/50 shadow-[0_18px_44px_hsl(var(--foreground)/0.08)] overflow-hidden z-50"
                     style={{ width: "520px" }}
                     onMouseEnter={handleMarcheEnter}
                     onMouseLeave={handleMarcheLeave}
@@ -114,9 +107,10 @@ const Navbar = () => {
                             <Link
                               key={cat.id}
                               to={`/marche?cat=${cat.id}`}
-                              className="flex items-start gap-3 px-3 py-3 rounded-xl transition-colors group hover:bg-surface-container/50"
+                              onClick={() => setMarcheOpen(false)}
+                              className="flex items-start gap-3 px-3 py-3 rounded-lg transition-colors group hover:bg-surface-container/50"
                             >
-                              <div className="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center shrink-0 group-hover:bg-primary-container/40 transition-colors">
+                              <div className="w-8 h-8 rounded-md bg-surface-container flex items-center justify-center shrink-0 group-hover:bg-primary-container/40 transition-colors">
                                 <span className="material-symbols-outlined text-base text-on-surface-variant group-hover:text-primary transition-colors">
                                   {cat.icon || "eco"}
                                 </span>
@@ -136,13 +130,13 @@ const Navbar = () => {
                           Explorer
                         </div>
                         <div className="flex flex-col gap-0.5">
-                          <Link to="/marche" className="px-3 py-2.5 rounded-xl text-[13px] font-medium text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors">
+                          <Link to="/marche" onClick={() => setMarcheOpen(false)} className="px-3 py-2.5 rounded-md text-[13px] font-medium text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors">
                             Tous les produits
                           </Link>
-                          <Link to="/marche?sort=new" className="px-3 py-2.5 rounded-xl text-[13px] font-medium text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors">
+                          <Link to="/marche?sort=new" onClick={() => setMarcheOpen(false)} className="px-3 py-2.5 rounded-md text-[13px] font-medium text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors">
                             Nouveautés
                           </Link>
-                          <Link to="/marche?sort=popular" className="px-3 py-2.5 rounded-xl text-[13px] font-medium text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors">
+                          <Link to="/marche?sort=popular" onClick={() => setMarcheOpen(false)} className="px-3 py-2.5 rounded-md text-[13px] font-medium text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors">
                             Populaires
                           </Link>
                         </div>
@@ -156,7 +150,7 @@ const Navbar = () => {
             {user && (
               <Link
                 to={accountPath}
-                className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                  className={`px-3.5 py-2 rounded-md text-[13px] font-medium transition-all duration-150 ${
                   isActive("/mon-compte") || (role === "seller" && isActive("/dashboard"))
                     ? "text-foreground bg-surface-container"
                     : "text-on-surface-variant hover:text-foreground hover:bg-surface-container/50"
@@ -169,7 +163,7 @@ const Navbar = () => {
             {user && role === "seller" && (
               <Link
                 to="/dashboard"
-                className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                className={`px-3.5 py-2 rounded-md text-[13px] font-medium transition-all duration-150 ${
                   isActive("/dashboard")
                     ? "text-foreground bg-surface-container"
                     : "text-on-surface-variant hover:text-foreground hover:bg-surface-container/50"
@@ -294,7 +288,7 @@ const Navbar = () => {
             >
               <div className="flex flex-col px-5 py-4 gap-0.5 max-h-[80vh] overflow-y-auto">
                 {user && (
-                  <div className="flex items-center gap-3 px-3 py-3 mb-2 bg-surface-container/40 rounded-xl">
+                  <div className="flex items-center gap-3 px-3 py-3 mb-2 bg-surface-container/40 rounded-lg">
                     <div className="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-primary-container-foreground font-bold">
                       {(user.email || "U").charAt(0).toUpperCase()}
                     </div>
@@ -305,7 +299,7 @@ const Navbar = () => {
                   </div>
                 )}
 
-                <Link to="/marche" className="flex items-center gap-3 px-3 py-3 rounded-xl text-[13px] font-medium text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors">
+                <Link to="/marche" onClick={() => setMobileOpen(false)} className="flex items-center gap-3 px-3 py-3 rounded-lg text-[13px] font-medium text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors">
                   <span className="material-symbols-outlined text-lg">storefront</span>
                   Tous les produits
                 </Link>
@@ -318,7 +312,8 @@ const Navbar = () => {
                     <Link
                       key={cat.id}
                       to={`/marche?cat=${cat.id}`}
-                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors"
                     >
                       <span className="material-symbols-outlined text-base">{cat.icon || "eco"}</span>
                       {cat.name}
@@ -361,7 +356,7 @@ const Navbar = () => {
                       <Link to="/auth" className="flex items-center justify-center py-3 rounded-xl text-[13px] font-semibold text-on-surface-variant hover:bg-surface-container/50 transition-colors border border-border/30">
                         Connexion
                       </Link>
-                      <Link to="/auth?role=seller" className="flex items-center justify-center py-3 rounded-full bg-foreground text-background text-[13px] font-semibold hover:opacity-90 transition-opacity">
+                      <Link to="/auth?role=seller" className="flex items-center justify-center py-3 rounded-lg bg-foreground text-background text-[13px] font-semibold hover:opacity-90 transition-opacity">
                         Commencer gratuitement
                       </Link>
                     </div>
