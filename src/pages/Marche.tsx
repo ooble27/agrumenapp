@@ -152,8 +152,29 @@ const Marche = () => {
       <Navbar />
       <main className="pt-28 md:pt-24">
 
+        {/* ═══════ BREADCRUMB ═══════ */}
+        <section className="px-5 md:px-12 pt-3 md:pt-4 max-w-[1440px] mx-auto">
+          <nav className="flex items-center gap-1.5 text-xs text-on-surface-variant">
+            <Link to="/" className="hover:text-foreground transition-colors">Accueil</Link>
+            <span className="material-symbols-outlined text-sm">chevron_right</span>
+            {selectedCategory ? (
+              <>
+                <button onClick={() => handleCategoryChange(null)} className="hover:text-foreground transition-colors">
+                  Marché
+                </button>
+                <span className="material-symbols-outlined text-sm">chevron_right</span>
+                <span className="text-foreground font-semibold">
+                  {categories.find(c => c.id === selectedCategory)?.name || "Catégorie"}
+                </span>
+              </>
+            ) : (
+              <span className="text-foreground font-semibold">Marché</span>
+            )}
+          </nav>
+        </section>
+
         {/* ═══════ HEADER — all screens ═══════ */}
-        <section className="px-5 md:px-12 pt-3 md:pt-6 max-w-[1440px] mx-auto">
+        <section className="px-5 md:px-12 pt-2 md:pt-4 max-w-[1440px] mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-lg md:text-2xl font-headline font-extrabold tracking-tight">
