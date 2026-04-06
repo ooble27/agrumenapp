@@ -4,8 +4,8 @@
   "description": "Plateforme de vente directe de produits agricoles du Sénégal",
   "start_url": "/marche",
   "display": "standalone",
-  "background_color": "#1a1a1a",
-  "theme_color": "#4a7c59",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
   "orientation": "portrait",
   "icons": [
     {
