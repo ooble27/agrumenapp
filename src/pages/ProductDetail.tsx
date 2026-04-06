@@ -263,7 +263,6 @@ const ProductDetail = () => {
             Retour au Marché
           </Link>
         </main>
-        <Footer />
       </div>
     );
   }
@@ -646,7 +645,7 @@ const ProductDetail = () => {
           )}
         </div>
       </main>
-      <div className="hidden md:block"><Footer /></div>
+      
     </div>
   );
 };
