@@ -318,9 +318,9 @@ const ProductDetail = () => {
               <span className="w-10 text-center font-headline font-extrabold text-sm">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="w-9 h-9 flex items-center justify-center rounded-r-xl bg-primary text-primary-foreground"
+                className="w-9 h-9 flex items-center justify-center rounded-full bg-background border border-border shadow-sm"
               >
-                <span className="material-symbols-outlined text-base">add</span>
+                <span className="material-symbols-outlined text-base text-foreground">add</span>
               </button>
             </div>
           </div>
@@ -388,7 +388,7 @@ const ProductDetail = () => {
               disabled={product.stock <= 0}
               className="w-full bg-foreground text-background py-4 rounded-2xl font-headline font-bold text-[15px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform disabled:opacity-40"
             >
-              <span className="material-symbols-outlined text-lg">shopping_bag</span>
+              <span className="material-symbols-outlined text-lg">shopping_basket</span>
               Ajouter {quantity > 1 ? `(${quantity})` : ""} · {formatPrice(totalPrice)}
             </button>
           </div>
