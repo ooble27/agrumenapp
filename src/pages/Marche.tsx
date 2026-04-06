@@ -173,7 +173,7 @@ const Marche = () => {
 
         {/* ═══════ PROMO BANNER — all screens ═══════ */}
         <section className="px-5 md:px-12 mt-4 max-w-[1440px] mx-auto">
-          <div className="relative bg-[hsl(78,60%,35%)] rounded-lg p-5 md:p-8 flex items-center overflow-hidden">
+          <div className="relative bg-[hsl(8,72%,30%)] rounded-lg p-5 md:p-8 flex items-center overflow-hidden">
             <div className="flex-1 relative z-10">
               <span className="inline-block bg-primary-container text-primary-container-foreground text-[10px] md:text-xs font-bold uppercase px-2.5 py-1 rounded mb-2">
                 Nouveau 🌿

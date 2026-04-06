@@ -25,7 +25,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-inverse-surface relative">
+    <div className="min-h-screen bg-background relative">
       {/* Landing page navbar */}
       <nav className="fixed top-0 w-full z-[60] bg-transparent">
         <div className="flex items-center justify-between px-5 md:px-10 py-4 max-w-[1440px] mx-auto">
