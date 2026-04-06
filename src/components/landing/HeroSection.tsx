@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import heroLanding from "@/assets/hero-landing.jpg";
+import heroLandscape from "@/assets/illust-hero-landscape.png";
 
 const HeroSection = () => {
   return (
@@ -8,8 +8,8 @@ const HeroSection = () => {
       {/* Background */}
       <div className="absolute inset-0">
         <img
-          src={heroLanding}
-          alt="Terres agricoles sénégalaises"
+          src={heroLandscape}
+          alt="Paysage agricole sénégalais"
           className="w-full h-full object-cover"
           width={1920}
           height={1080}

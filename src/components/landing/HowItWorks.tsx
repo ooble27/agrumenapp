@@ -1,34 +1,34 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import farmPeppers from "@/assets/farm-peppers.jpg";
-import farmFieldWide from "@/assets/farm-field-wide.jpg";
-import seedlingClose from "@/assets/seedling-close.jpg";
-import farmNursery1 from "@/assets/farm-nursery-1.jpg";
+import illustSelection from "@/assets/illust-selection.png";
+import illustAgriculture from "@/assets/illust-agriculture.png";
+import illustTracability from "@/assets/illust-tracability.png";
+import illustBio from "@/assets/illust-bio.png";
 
 const services = [
   {
     tag: "Sélection",
     title: "Produits Triés sur le Volet",
     desc: "Chaque produit est sélectionné directement auprès de nos producteurs partenaires pour garantir fraîcheur et qualité.",
-    image: farmPeppers,
+    image: illustSelection,
   },
   {
     tag: "Agriculture",
     title: "Agriculture Responsable",
     desc: "Nous collaborons avec des producteurs qui pratiquent une agriculture respectueuse de la terre et des saisons.",
-    image: farmFieldWide,
+    image: illustAgriculture,
   },
   {
     tag: "Traçabilité",
     title: "Du Champ à Votre Table",
     desc: "Suivez le parcours de chaque produit, de la récolte jusqu'à votre porte, en toute transparence.",
-    image: seedlingClose,
+    image: illustTracability,
   },
   {
     tag: "Bio & Local",
     title: "Produits 100% Naturels",
     desc: "Zéro pesticide, zéro intermédiaire. Des produits cultivés naturellement par nos partenaires locaux.",
-    image: farmNursery1,
+    image: illustBio,
   },
 ];
 
@@ -81,11 +81,11 @@ const HowItWorks = () => {
             transition={{ delay: i * 0.1, duration: 0.6 }}
             className="group"
           >
-            <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4">
+            <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-primary/5 flex items-center justify-center p-4">
               <img
                 src={service.image}
                 alt={service.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
                 loading="lazy"
                 width={400}
                 height={300}
