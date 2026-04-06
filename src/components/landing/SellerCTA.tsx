@@ -33,7 +33,7 @@ const SellerCTA = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-lg md:text-xl font-body leading-relaxed text-on-surface-variant"
           >
-            Agrumen achète directement les récoltes des meilleurs producteurs sénégalais et vous les propose en ligne. Des fruits, des légumes, des céréales — le tout 100% naturel, sans intermédiaire, livré chez vous.
+            Agrumen est une plateforme qui vous permet d'acheter des produits agricoles frais, 100% naturels, directement depuis votre téléphone. Des fruits, des légumes, des céréales — livrés chez vous en un clic.
           </motion.p>
 
           <motion.div
@@ -70,30 +70,6 @@ const SellerCTA = () => {
           </motion.div>
         </div>
 
-        {/* Big numbers */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="mt-16 md:mt-20 grid grid-cols-2 md:grid-cols-4 gap-8"
-        >
-          {[
-            { num: "500+", label: "Producteurs partenaires" },
-            { num: "10K+", label: "Commandes livrées" },
-            { num: "24h", label: "Délai de livraison" },
-            { num: "0%", label: "Pesticide chimique" },
-          ].map((stat, i) => (
-            <div key={stat.label} className="text-center md:text-left">
-              <div className="text-3xl md:text-5xl font-headline font-extrabold tracking-[-0.03em] text-primary">
-                {stat.num}
-              </div>
-              <div className="text-xs md:text-sm text-on-surface-variant font-body mt-1">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </motion.div>
       </div>
 
       {/* ─── SECTION 2: Delivery — dark bg with moto illustration ─── */}
