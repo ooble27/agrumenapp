@@ -51,7 +51,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 bg-background backdrop-blur-xl border-b border-border/30 safe-area-top">
+      <nav className="fixed top-0 w-full z-50 bg-card border-b border-border/20 safe-area-top">
         <div className="flex items-center px-5 md:px-8 lg:px-10 py-2.5 max-w-[1440px] mx-auto w-full gap-1">
           {/* Logo */}
           <Link to="/" className="text-xl font-black tracking-tighter text-foreground font-headline shrink-0 mr-6">
