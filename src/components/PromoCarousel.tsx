@@ -1,11 +1,11 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import watermelonImg from "@/assets/watermelon-promo.png";
-import papayaImg from "@/assets/papaya-promo.png";
-import vegetablesImg from "@/assets/vegetables-promo.png";
-import fruitsPromo from "@/assets/fruits-promo.png";
-import spicesImg from "@/assets/spices-promo.png";
-import deliveryImg from "@/assets/delivery-promo.png";
+import watermelonImg from "@/assets/watermelon-promo.webp";
+import papayaImg from "@/assets/papaya-promo.webp";
+import vegetablesImg from "@/assets/vegetables-promo.webp";
+import fruitsPromo from "@/assets/fruits-promo.webp";
+import spicesImg from "@/assets/spices-promo.webp";
+import deliveryImg from "@/assets/delivery-promo.webp";
 
 const banners = [
   {
