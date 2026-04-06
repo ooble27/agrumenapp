@@ -23,8 +23,8 @@ const BottomNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
-      <div className="mx-4 mb-4 safe-area-bottom">
-        <div className="flex items-center justify-around bg-card/95 backdrop-blur-xl border border-border/30 rounded-2xl px-2 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
+      <div className="mx-5 mb-5 safe-area-bottom">
+        <div className="flex items-center justify-around bg-foreground rounded-xl px-3 py-2.5">
           {navItems.map((item) => {
             const isCart = item.path === "__cart__";
             const isProfile = item.path === "__profile__";
@@ -34,27 +34,34 @@ const BottomNav = () => {
             const content = (
               <div className="relative flex items-center justify-center">
                 <motion.div
-                  className={`flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
-                    active
-                      ? "bg-primary shadow-[0_4px_12px_rgba(45,90,0,0.3)]"
-                      : "bg-transparent"
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-lg transition-colors duration-200 ${
+                    active ? "bg-background" : ""
                   }`}
-                  whileTap={{ scale: 0.9 }}
+                  whileTap={{ scale: 0.93 }}
                 >
                   <span
-                    className={`material-symbols-outlined text-[24px] transition-all duration-300 ${
-                      active ? "text-primary-foreground" : "text-on-surface-variant"
+                    className={`material-symbols-outlined text-[20px] ${
+                      active ? "text-foreground" : "text-background/60"
                     }`}
                     style={active ? { fontVariationSettings: "'FILL' 1, 'wght' 600" } : { fontVariationSettings: "'wght' 400" }}
                   >
                     {item.icon}
                   </span>
+                  {active && (
+                    <motion.span
+                      initial={{ width: 0, opacity: 0 }}
+                      animate={{ width: "auto", opacity: 1 }}
+                      className="text-[12px] font-headline font-bold text-foreground overflow-hidden whitespace-nowrap"
+                    >
+                      {item.label}
+                    </motion.span>
+                  )}
                 </motion.div>
                 {isCart && totalItems > 0 && (
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 w-[20px] h-[20px] bg-destructive text-destructive-foreground text-[10px] font-bold rounded-full flex items-center justify-center z-20 shadow-sm"
+                    className="absolute -top-1.5 -right-1 w-[18px] h-[18px] bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full flex items-center justify-center z-20"
                   >
                     {totalItems}
                   </motion.span>
