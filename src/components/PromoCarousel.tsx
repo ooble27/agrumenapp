@@ -57,12 +57,15 @@ const banners = [
   },
   {
     id: 6,
-    bg: "bg-gradient-to-br from-[hsl(200,55%,45%)] to-[hsl(210,50%,38%)]",
+    bg: "bg-inverse-surface",
     badge: "Livraison 🚚",
     title: "Livré Chez Vous\nen 24h",
     cta: "Commander",
     link: "/marche",
     image: deliveryImg,
+    titleColor: "",
+    badgeColor: "bg-primary-container/20 text-primary-container",
+    ctaColor: "text-primary-container bg-primary-container/15",
   },
 ];
 
@@ -126,7 +129,7 @@ const PromoCarousel = () => {
               <img
                 src={banner.image}
                 alt=""
-                className="w-36 md:w-44 h-36 md:h-44 object-contain -mr-2 -mb-4 -mt-2 relative z-10 drop-shadow-lg"
+                className={`${banner.id === 6 ? "w-44 md:w-52 h-44 md:h-52" : "w-36 md:w-44 h-36 md:h-44"} object-contain -mr-2 -mb-4 -mt-2 relative z-10 drop-shadow-lg`}
                 loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
                 width={512}
