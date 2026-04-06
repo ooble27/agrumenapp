@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Footer from "@/components/Footer";
 import { Link, Navigate } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
