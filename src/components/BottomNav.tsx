@@ -22,7 +22,7 @@ const BottomNav = () => {
   const isProfileActive = isActive("/mon-compte") || isActive("/auth");
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-border/20">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-card border-t border-border/20">
       <div className="flex items-center justify-around px-2 pt-2 pb-2 safe-area-bottom">
         {navItems.map((item) => {
           const isCart = item.path === "__cart__";
