@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import farmPeppers from "@/assets/farm-peppers.jpg";
-import farmTeam from "@/assets/farm-team.jpg";
-import farmFieldWide from "@/assets/farm-field-wide.jpg";
+import farmNursery2 from "@/assets/farm-nursery-2.jpg";
+import seedlingGrow1 from "@/assets/seedling-grow-1.jpg";
+import seedlingGrow2 from "@/assets/seedling-grow-2.jpg";
 
 const steps = [
   {
