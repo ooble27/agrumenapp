@@ -4,6 +4,8 @@ import watermelonImg from "@/assets/watermelon-promo.png";
 import papayaImg from "@/assets/papaya-promo.png";
 import vegetablesImg from "@/assets/vegetables-promo.png";
 import fruitsPromo from "@/assets/fruits-promo.png";
+import spicesImg from "@/assets/spices-promo.png";
+import deliveryImg from "@/assets/delivery-promo.png";
 
 const banners = [
   {
@@ -51,7 +53,7 @@ const banners = [
     title: "Piments &\nÉpices Locales",
     cta: "Explorer",
     link: "/marche",
-    image: vegetablesImg,
+    image: spicesImg,
   },
   {
     id: 6,
@@ -60,7 +62,7 @@ const banners = [
     title: "Livré Chez Vous\nen 24h",
     cta: "Commander",
     link: "/marche",
-    image: fruitsPromo,
+    image: deliveryImg,
   },
 ];
 
