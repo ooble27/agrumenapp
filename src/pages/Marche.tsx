@@ -115,8 +115,17 @@ const Marche = () => {
     return MOCK_CATEGORIES;
   }, [dbCategories]);
 
+  // Build a set of category IDs that match the selected category (handles DB UUID + mock string IDs)
+  const matchingCatIds = useMemo(() => {
+    if (!selectedCategory) return null;
+    const selected = categories.find(c => c.id === selectedCategory);
+    if (!selected) return new Set([selectedCategory]);
+    // Find all category IDs with the same name (covers DB + mock duplicates)
+    return new Set(categories.filter(c => c.name.toLowerCase() === selected.name.toLowerCase()).map(c => c.id));
+  }, [selectedCategory, categories]);
+
   const filtered = products.filter((p) => {
-    const matchCat = !selectedCategory || p.category_id === selectedCategory;
+    const matchCat = !matchingCatIds || (p.category_id && matchingCatIds.has(p.category_id));
     const matchSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
