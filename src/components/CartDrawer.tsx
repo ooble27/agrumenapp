@@ -124,8 +124,16 @@ const CartDrawer = () => {
               </button>
 
               <button
+                onClick={() => { setIsOpen(false); navigate("/marche"); }}
+                className="w-full text-center text-sm text-on-surface-variant hover:text-primary font-headline font-bold transition-colors flex items-center justify-center gap-2"
+              >
+                <span className="material-symbols-outlined text-base">arrow_back</span>
+                Continuer mes achats
+              </button>
+
+              <button
                 onClick={clearCart}
-                className="w-full text-center text-sm text-on-surface-variant hover:text-destructive font-headline font-bold transition-colors"
+                className="w-full text-center text-xs text-on-surface-variant hover:text-destructive font-headline font-bold transition-colors"
               >
                 Vider le panier
               </button>

@@ -86,6 +86,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSession(null);
     setRole(null);
     setProfile(null);
+    // Dispatch custom event so cart can clear itself
+    window.dispatchEvent(new Event("user-signout"));
   };
 
   return (
