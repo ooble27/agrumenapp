@@ -111,7 +111,7 @@ const PromoCarousel = () => {
             <Link
               key={banner.id}
               to={banner.link}
-              className={`shrink-0 w-[85%] md:w-[45%] lg:w-[30%] snap-start relative ${banner.bg} rounded-lg p-5 md:p-6 flex items-center overflow-hidden min-h-[140px] md:min-h-[160px] group`}
+              className={`shrink-0 w-[85%] md:w-[45%] lg:w-[30%] snap-start relative ${banner.bg} rounded-lg p-4 md:p-6 flex items-center overflow-hidden min-h-[120px] md:min-h-[140px] group`}
             >
               <div className="flex-1 relative z-10">
                 <span className={`inline-block ${banner.badgeColor || "bg-white/20 backdrop-blur-sm text-white"} text-[10px] md:text-xs font-bold uppercase px-2.5 py-1 rounded mb-2`}>
@@ -130,7 +130,7 @@ const PromoCarousel = () => {
               <img
                 src={banner.image}
                 alt=""
-                className={`${banner.id === 6 ? "w-52 md:w-64 h-52 md:h-64 -mr-4 -mb-6" : "w-36 md:w-44 h-36 md:h-44 -mr-2 -mb-4"} object-contain -mt-2 relative z-10 drop-shadow-lg`}
+                className={`${banner.id === 6 ? "w-40 md:w-52 lg:w-64 h-28 md:h-40 lg:h-52 -mr-1 -mb-3" : "w-28 md:w-40 lg:w-44 h-28 md:h-40 lg:h-44 -mr-2 -mb-4"} object-contain -mt-2 relative z-10 drop-shadow-lg`}
                 loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
                 width={512}
