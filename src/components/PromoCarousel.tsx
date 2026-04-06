@@ -4,11 +4,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import watermelonImg from "@/assets/watermelon-promo.png";
 import papayaImg from "@/assets/papaya-promo.png";
 import vegetablesImg from "@/assets/vegetables-promo.png";
+import fruitsPromo from "@/assets/fruits-promo.png";
 
 const banners = [
   {
     id: 1,
-    bg: "bg-gradient-to-r from-[hsl(25,95%,50%)] to-[hsl(35,100%,55%)]",
+    bg: "bg-gradient-to-r from-[hsl(220,35%,28%)] to-[hsl(230,30%,38%)]",
     badge: "Saison 🍊",
     title: "Papayes & Mangues\ndu Terroir",
     cta: "Découvrir",
@@ -17,8 +18,8 @@ const banners = [
   },
   {
     id: 2,
-    bg: "bg-gradient-to-r from-[hsl(140,55%,32%)] to-[hsl(155,50%,40%)]",
-    badge: "Frais 🌿",
+    bg: "bg-gradient-to-r from-[hsl(340,40%,35%)] to-[hsl(355,35%,42%)]",
+    badge: "Frais 🍉",
     title: "Pastèques\nJuteuses",
     cta: "Voir les fruits",
     link: "/marche?cat=fruits",
@@ -26,12 +27,21 @@ const banners = [
   },
   {
     id: 3,
-    bg: "bg-gradient-to-r from-[hsl(0,70%,45%)] to-[hsl(15,80%,50%)]",
+    bg: "bg-gradient-to-r from-[hsl(25,50%,35%)] to-[hsl(35,45%,42%)]",
     badge: "Promo 🔥",
     title: "Légumes Frais\nChaque Jour",
     cta: "Commander",
     link: "/marche?cat=legumes",
     image: vegetablesImg,
+  },
+  {
+    id: 4,
+    bg: "bg-gradient-to-r from-[hsl(78,40%,28%)] to-[hsl(90,35%,35%)]",
+    badge: "Panier 🧺",
+    title: "Produits Frais\ndu Marché",
+    cta: "Voir tout",
+    link: "/marche",
+    image: fruitsPromo,
   },
 ];
 
