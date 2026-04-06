@@ -123,7 +123,7 @@ const SellerCTA = () => {
             <motion.img
               src={deliveryMoto}
               alt="Livraison à moto"
-              className="w-full max-w-[420px] lg:max-w-[480px] h-auto drop-shadow-2xl"
+              className="w-full max-w-[500px] lg:max-w-[580px] h-auto drop-shadow-2xl"
               loading="lazy"
               width={1024}
               height={768}
