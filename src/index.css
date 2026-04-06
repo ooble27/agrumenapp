@@ -97,7 +97,8 @@
 
 @layer base {
   * {
-    @apply border-border;
+@apply border-border;
+    -webkit-text-size-adjust: 100%;
   }
   body {
     @apply bg-background text-foreground antialiased;
