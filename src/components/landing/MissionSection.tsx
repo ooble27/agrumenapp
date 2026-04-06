@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import farmerField from "@/assets/farmer-field.jpg";
+import farmTeam from "@/assets/farm-team.jpg";
 
 const MissionSection = () => {
   return (
@@ -43,7 +43,7 @@ const MissionSection = () => {
         >
           <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden">
             <img
-              src={farmerField}
+              src={farmTeam}
               alt="Producteur dans son champ"
               className="w-full h-full object-cover"
               loading="lazy"

@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import aerialFarm from "@/assets/aerial-farm.jpg";
-import farmerField from "@/assets/farmer-field.jpg";
-import greenFields from "@/assets/green-fields.jpg";
-import freshProduce from "@/assets/fresh-produce-grid.jpg";
+import farmPeppers from "@/assets/farm-peppers.jpg";
+import farmTeam from "@/assets/farm-team.jpg";
+import farmNursery1 from "@/assets/farm-nursery-1.jpg";
+import farmNursery2 from "@/assets/farm-nursery-2.jpg";
+import farmFieldWide from "@/assets/farm-field-wide.jpg";
 
 const ValuesSection = () => {
   return (
@@ -34,20 +35,19 @@ const ValuesSection = () => {
         >
           <div className="relative w-full h-full min-h-[300px] md:min-h-[450px] rounded-2xl overflow-hidden group">
             <img
-              src={aerialFarm}
-              alt="Agriculture Monitoring"
+              src={farmPeppers}
+              alt="Nos champs de piments"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
               width={600}
               height={900}
             />
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-xs font-headline font-bold text-white/80 tracking-wider uppercase">Agriculture Durable</span>
+              <span className="text-xs font-headline font-bold text-white/80 tracking-wider uppercase">Nos Champs</span>
             </div>
           </div>
         </motion.div>
 
-        {/* Top right images */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -56,15 +56,15 @@ const ValuesSection = () => {
         >
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
             <img
-              src={freshProduce}
-              alt="Produits Frais"
+              src={farmTeam}
+              alt="Notre équipe sur le terrain"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
               width={400}
               height={300}
             />
             <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Produits Frais</span>
+              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Notre Équipe</span>
             </div>
           </div>
         </motion.div>
@@ -77,15 +77,15 @@ const ValuesSection = () => {
         >
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
             <img
-              src={farmerField}
-              alt="Agriculture de Précision"
+              src={farmNursery1}
+              alt="Pépinière"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
               width={400}
               height={300}
             />
             <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Nos Producteurs</span>
+              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Pépinière</span>
             </div>
           </div>
         </motion.div>
@@ -98,15 +98,15 @@ const ValuesSection = () => {
         >
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
             <img
-              src={greenFields}
-              alt="Bio & Naturel"
+              src={farmNursery2}
+              alt="Culture en croissance"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
               width={400}
               height={300}
             />
             <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Bio & Naturel</span>
+              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Nos Cultures</span>
             </div>
           </div>
         </motion.div>
@@ -121,8 +121,8 @@ const ValuesSection = () => {
         >
           <div className="relative aspect-[16/9] md:aspect-[2/1] rounded-2xl overflow-hidden group">
             <img
-              src={greenFields}
-              alt="Champs verdoyants"
+              src={farmFieldWide}
+              alt="Vue panoramique de nos champs"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
               width={800}
@@ -145,15 +145,15 @@ const ValuesSection = () => {
         >
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
             <img
-              src={aerialFarm}
-              alt="Vue aérienne"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              src={farmPeppers}
+              alt="Plantation de piments"
+              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
               width={400}
               height={300}
             />
             <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Vue Aérienne</span>
+              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Agriculture Bio</span>
             </div>
           </div>
         </motion.div>
