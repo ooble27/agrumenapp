@@ -33,7 +33,7 @@ const BottomNav = () => {
           const content = (
             <div className="flex flex-col items-center gap-0.5 px-4 py-1.5 min-w-[64px] relative">
               <span
-                className={`material-symbols-outlined text-[22px] transition-all duration-300 ${active ? "text-primary scale-110" : "text-on-surface-variant"}`}
+                className={`material-symbols-outlined text-[22px] transition-all duration-300 ${active ? "text-primary-container-foreground scale-110" : "text-on-surface-variant"}`}
                 style={active ? { fontVariationSettings: "'FILL' 1, 'wght' 600" } : {}}
               >
                 {item.icon}
@@ -47,13 +47,13 @@ const BottomNav = () => {
                   {totalItems}
                 </motion.span>
               )}
-              <span className={`text-[10px] font-medium transition-colors duration-300 ${active ? "text-primary font-bold" : "text-on-surface-variant"}`}>
+              <span className={`text-[10px] font-medium transition-colors duration-300 ${active ? "text-primary-container-foreground font-bold" : "text-on-surface-variant"}`}>
                 {item.label}
               </span>
               {active && (
                 <motion.div
                   layoutId="bottomnav-dot"
-                  className="w-1 h-1 rounded-full bg-primary mt-0.5"
+                  className="w-1 h-1 rounded-full bg-primary-container mt-0.5"
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
                 />
               )}
