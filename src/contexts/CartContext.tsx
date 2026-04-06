@@ -60,6 +60,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearCart = useCallback(() => setItems([]), []);
 
+  // Clear cart when user signs out
+  useEffect(() => {
+    const handleSignout = () => { setItems([]); setIsOpen(false); };
+    window.addEventListener("user-signout", handleSignout);
+    return () => window.removeEventListener("user-signout", handleSignout);
+  }, []);
+
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const totalPrice = items.reduce((sum, i) => sum + i.priceNum * i.quantity, 0);
 
