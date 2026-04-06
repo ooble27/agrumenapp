@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+
 import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -249,9 +249,6 @@ const Marche = () => {
           )}
         </section>
 
-        <div className="hidden md:block mt-8">
-          <Footer />
-        </div>
       </main>
     </div>
   );
