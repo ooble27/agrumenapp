@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState, useMemo } from "react";
@@ -61,8 +61,24 @@ const Marche = () => {
   const [dbProducts, setDbProducts] = useState<Product[]>([]);
   const [dbCategories, setDbCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(searchParams.get("cat"));
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Sync selectedCategory from URL query param
+  useEffect(() => {
+    const cat = searchParams.get("cat");
+    if (cat) setSelectedCategory(cat);
+  }, [searchParams]);
+
+  const handleCategoryChange = (catId: string | null) => {
+    setSelectedCategory(catId);
+    if (catId) {
+      setSearchParams({ cat: catId });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
