@@ -51,7 +51,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border/40 safe-area-top">
+      <nav className="fixed top-0 w-full z-50 bg-background backdrop-blur-xl border-b border-border/30 safe-area-top">
         <div className="flex items-center px-5 md:px-8 lg:px-10 py-2.5 max-w-[1440px] mx-auto w-full gap-1">
           {/* Logo */}
           <Link to="/" className="text-xl font-black tracking-tighter text-foreground font-headline shrink-0 mr-6">
@@ -68,7 +68,7 @@ const Navbar = () => {
               onMouseLeave={handleMarcheLeave}
             >
               <button
-                className={`flex items-center gap-1 px-3.5 py-2 rounded-md text-[13px] font-medium transition-all duration-150 ${
+                className={`flex items-center gap-1 px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
                   isActive("/marche") || marcheOpen
                     ? "text-foreground bg-surface-container"
                     : "text-on-surface-variant hover:text-foreground hover:bg-surface-container/50"
@@ -150,7 +150,7 @@ const Navbar = () => {
             {user && (
               <Link
                 to={accountPath}
-                  className={`px-3.5 py-2 rounded-md text-[13px] font-medium transition-all duration-150 ${
+                  className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
                   isActive("/mon-compte") || (role === "seller" && isActive("/dashboard"))
                     ? "text-foreground bg-surface-container"
                     : "text-on-surface-variant hover:text-foreground hover:bg-surface-container/50"
@@ -163,7 +163,7 @@ const Navbar = () => {
             {user && role === "seller" && (
               <Link
                 to="/dashboard"
-                className={`px-3.5 py-2 rounded-md text-[13px] font-medium transition-all duration-150 ${
+                className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
                   isActive("/dashboard")
                     ? "text-foreground bg-surface-container"
                     : "text-on-surface-variant hover:text-foreground hover:bg-surface-container/50"
@@ -196,7 +196,7 @@ const Navbar = () => {
                     onClick={() => setProfileOpen(!profileOpen)}
                     className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors"
                   >
-                    <div className="w-7 h-7 rounded-full bg-primary-container flex items-center justify-center text-primary-container-foreground text-xs font-bold">
+                    <div className="w-7 h-7 rounded-lg bg-primary-container flex items-center justify-center text-primary-container-foreground text-xs font-bold">
                       {(user.email || "U").charAt(0).toUpperCase()}
                     </div>
                     <span className="material-symbols-outlined text-[15px] transition-transform duration-200" style={{ transform: profileOpen ? "rotate(180deg)" : "none" }}>
@@ -211,7 +211,7 @@ const Navbar = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 4, scale: 0.97 }}
                         transition={{ duration: 0.12 }}
-                        className="absolute right-0 top-full mt-2 w-52 bg-background rounded-xl border border-border/40 shadow-[0_12px_36px_rgba(0,0,0,0.1)] overflow-hidden z-50"
+                        className="absolute right-0 top-full mt-2 w-52 bg-background rounded-xl border border-border/30 shadow-[0_12px_36px_rgba(0,0,0,0.08)] overflow-hidden z-50"
                       >
                         <div className="px-4 py-3 border-b border-border/20">
                           <div className="text-sm font-semibold text-foreground truncate">{user.email}</div>
