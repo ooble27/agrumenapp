@@ -5,7 +5,8 @@ import heroGuy from "@/assets/hero-delivery-guy.png";
 const HeroSection = () => {
   return (
     <section className="relative overflow-hidden bg-background">
-      <div className="relative z-10 mx-auto grid min-h-[100svh] w-full max-w-7xl items-center gap-4 px-5 pb-10 pt-28 sm:px-6 lg:grid-cols-[1.12fr_0.88fr] lg:gap-0 lg:px-16 lg:pb-0 lg:pt-0">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-7xl flex-col items-center justify-end px-5 pb-6 pt-24 sm:px-6 lg:grid lg:grid-cols-[1.12fr_0.88fr] lg:items-center lg:justify-normal lg:gap-0 lg:px-16 lg:pb-0 lg:pt-0">
+        {/* Image */}
         <motion.div
           initial={{ opacity: 0, x: -24, scale: 0.97 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -15,27 +16,28 @@ const HeroSection = () => {
           <img
             src={heroGuy}
             alt="Livreur Agrumen avec panier de produits frais"
-            className="w-[110vw] max-w-none sm:w-[96vw] md:w-[760px] lg:w-[760px] xl:w-[860px] -ml-[8vw] sm:-ml-10 lg:-ml-20 object-contain"
+            className="w-[92vw] max-w-none sm:w-[80vw] md:w-[760px] lg:w-[760px] xl:w-[860px] sm:-ml-10 lg:-ml-20 object-contain"
             width={1344}
             height={896}
           />
         </motion.div>
 
+        {/* Text card */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.12, ease: "easeOut" }}
-          className="flex items-center justify-start lg:justify-end"
+          className="flex w-full items-center justify-start lg:justify-end"
         >
-          <div className="w-full max-w-[34rem] rounded-[2rem] bg-primary px-7 py-8 shadow-2xl sm:px-9 sm:py-10 lg:rounded-[2.75rem] lg:px-12 lg:py-14">
-            <h1 className="font-headline text-[3rem] font-extrabold leading-[0.88] tracking-[-0.055em] text-primary-foreground sm:text-[3.7rem] md:text-[4.5rem] lg:text-[5.2rem] xl:text-[5.8rem]">
+          <div className="w-full max-w-[34rem] rounded-xl bg-primary px-7 py-8 shadow-2xl sm:px-9 sm:py-10 lg:rounded-2xl lg:px-12 lg:py-14">
+            <h1 className="font-headline text-[2.6rem] font-extrabold leading-[0.88] tracking-[-0.055em] text-primary-foreground sm:text-[3.7rem] md:text-[4.5rem] lg:text-[5.2rem] xl:text-[5.8rem]">
               <span className="block">Du Champ</span>
               <span className="block">à Votre Table</span>
             </h1>
 
             <Link
               to="/marche"
-              className="mt-8 inline-flex items-center gap-3 rounded-full bg-background px-8 py-4 font-headline text-sm font-bold text-primary transition-all hover:opacity-90 active:scale-[0.97]"
+              className="mt-8 inline-flex items-center gap-3 rounded-xl bg-background px-8 py-4 font-headline text-sm font-bold text-primary transition-all hover:opacity-90 active:scale-[0.97]"
             >
               Commander maintenant
               <span className="material-symbols-outlined text-lg">arrow_forward</span>
