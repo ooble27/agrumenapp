@@ -128,8 +128,8 @@ const SellerCTA = () => {
             <div className="grid grid-cols-2 gap-2 p-4 h-full">
               <div className="rounded-2xl overflow-hidden">
                 <img
-                  src={farmPeppers}
-                  alt="Nos cultures de piments"
+                  src={farmNursery2}
+                  alt="Nos pépinières"
                   className="w-full h-full object-cover"
                   loading="lazy"
                   width={400}
@@ -139,8 +139,8 @@ const SellerCTA = () => {
               <div className="flex flex-col gap-2">
                 <div className="rounded-2xl overflow-hidden flex-1">
                   <img
-                    src={farmTeam}
-                    alt="Notre équipe"
+                    src={seedlingGrow1}
+                    alt="Jeune pousse"
                     className="w-full h-full object-cover"
                     loading="lazy"
                     width={400}
@@ -149,8 +149,8 @@ const SellerCTA = () => {
                 </div>
                 <div className="rounded-2xl overflow-hidden flex-1">
                   <img
-                    src={farmFieldWide}
-                    alt="Nos champs"
+                    src={seedlingGrow2}
+                    alt="Croissance des plants"
                     className="w-full h-full object-cover"
                     loading="lazy"
                     width={400}
@@ -164,8 +164,8 @@ const SellerCTA = () => {
           {/* Mobile image */}
           <div className="lg:hidden h-[250px] overflow-hidden">
             <img
-              src={farmFieldWide}
-              alt="Nos champs"
+              src={farmNursery2}
+              alt="Nos pépinières"
               className="w-full h-full object-cover"
               loading="lazy"
               width={800}
