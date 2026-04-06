@@ -100,7 +100,7 @@ const PromoCarousel = () => {
               <img
                 src={banner.image}
                 alt=""
-                className="w-28 md:w-36 h-28 md:h-36 object-contain -mr-2 -mb-3 -mt-1 relative z-10 drop-shadow-lg"
+                className="w-36 md:w-44 h-36 md:h-44 object-contain -mr-2 -mb-4 -mt-2 relative z-10 drop-shadow-lg"
                 loading="lazy"
                 width={512}
                 height={512}
