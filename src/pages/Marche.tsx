@@ -6,10 +6,10 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import fruitsPromo from "@/assets/fruits-promo.png";
 import { buildMarketCategories, getCategoryKey, MOCK_PRODUCTS, type MarketProduct } from "@/data/marketplaceMocks";
 import type { Category } from "@/types/database";
 import ProductCard from "@/components/ProductCard";
+import PromoCarousel from "@/components/PromoCarousel";
 
 type Product = MarketProduct;
 
@@ -171,26 +171,9 @@ const Marche = () => {
           </div>
         </section>
 
-        {/* ═══════ PROMO BANNER — all screens ═══════ */}
+        {/* ═══════ PROMO BANNERS CAROUSEL ═══════ */}
         <section className="px-5 md:px-12 mt-4 max-w-[1440px] mx-auto">
-          <div className="relative bg-[hsl(8,72%,30%)] rounded-lg p-5 md:p-8 flex items-center overflow-hidden">
-            <div className="flex-1 relative z-10">
-              <span className="inline-block bg-primary-container text-primary-container-foreground text-[10px] md:text-xs font-bold uppercase px-2.5 py-1 rounded mb-2">
-                Nouveau 🌿
-              </span>
-              <h3 className="text-white font-headline font-bold text-lg md:text-2xl leading-tight mb-1">
-                Produits Frais<br />Chaque Jour
-              </h3>
-              <Link
-                to="/marche"
-                className="inline-flex items-center gap-1 text-white text-xs md:text-sm font-semibold mt-2 bg-white/20 px-3 py-1.5 rounded-md hover:bg-white/30 transition-colors"
-              >
-                Voir tout
-                <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </Link>
-            </div>
-            <img src={fruitsPromo} alt="Fruits frais" className="w-36 md:w-48 h-36 md:h-48 object-contain -mr-4 -mb-6 -mt-4 relative z-10" />
-          </div>
+          <PromoCarousel />
         </section>
 
         {/* ═══════ CATEGORIES ═══════ */}
