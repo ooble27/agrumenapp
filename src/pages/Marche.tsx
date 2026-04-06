@@ -5,16 +5,14 @@ import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import type { Tables } from "@/integrations/supabase/types";
 import fruitsPromo from "@/assets/fruits-promo.png";
+import type { Product as BaseProduct, Category } from "@/types/database";
 import ProductCard from "@/components/ProductCard";
 
-type Product = Tables<"products"> & {
+type Product = BaseProduct & {
   shops: { name: string; seller_id: string } | null;
   categories: { name: string; icon: string | null } | null;
 };
-
-type Category = Tables<"categories">;
 
 /* ═══════ MOCK DATA for preview ═══════ */
 const MOCK_CATEGORIES: Category[] = [

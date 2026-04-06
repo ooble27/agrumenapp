@@ -8,9 +8,7 @@ import Footer from "@/components/Footer";
 import waveLogo from "@/assets/wave-logo.png";
 import orangeMoneyLogo from "@/assets/orange-money-logo.png";
 import { toast } from "sonner";
-import type { Tables } from "@/integrations/supabase/types";
-
-type Order = Tables<"orders">;
+import type { Order } from "@/types/database";
 
 type ActiveTab = "overview" | "orders" | "profile" | "addresses";
 

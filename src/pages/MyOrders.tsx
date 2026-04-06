@@ -5,9 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import type { Tables } from "@/integrations/supabase/types";
-
-type Order = Tables<"orders">;
+import type { Order } from "@/types/database";
 
 const statusLabels: Record<string, { label: string; color: string }> = {
   pending: { label: "En attente", color: "bg-tertiary/20 text-tertiary-foreground" },

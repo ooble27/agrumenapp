@@ -5,14 +5,12 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
-import type { Tables } from "@/integrations/supabase/types";
 import ProductCard from "@/components/ProductCard";
+import type { Product as BaseProduct, ProductImage } from "@/types/database";
 
-type Product = Tables<"products"> & {
+type Product = BaseProduct & {
   categories: { name: string; icon: string | null } | null;
 };
-
-type ProductImage = Tables<"product_images">;
 
 type SellerProfile = {
   full_name: string;

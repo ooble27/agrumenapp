@@ -3,14 +3,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import type { Tables } from "@/integrations/supabase/types";
+import type { Product, Shop, OrderItem, Category } from "@/types/database";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import waveLogo from "@/assets/wave-logo.png";
 import orangeMoneyLogo from "@/assets/orange-money-logo.png";
 
-type Product = Tables<"products">;
-type Shop = Tables<"shops">;
-type OrderItemWithProduct = Tables<"order_items"> & { products: { name: string; image_url: string | null } | null };
+type OrderItemWithProduct = OrderItem & { products: { name: string; image_url: string | null } | null };
 
 const SellerDashboard = () => {
   const { user, profile, signOut, role } = useAuth();
@@ -21,7 +19,7 @@ const SellerDashboard = () => {
   const [showCreateShop, setShowCreateShop] = useState(false);
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [categories, setCategories] = useState<Tables<"categories">[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeNav, setActiveNav] = useState("overview");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
