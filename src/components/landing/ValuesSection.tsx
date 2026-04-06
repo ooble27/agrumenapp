@@ -25,16 +25,16 @@ const ValuesSection = () => {
       </motion.div>
 
       {/* Masonry-like image grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        {/* Tall left */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        {/* Tall left — only tall on md+ */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="col-span-1 row-span-2"
+          className="sm:col-span-1 md:row-span-2"
         >
-          <div className="relative w-full h-full min-h-[300px] md:min-h-[450px] rounded-2xl overflow-hidden group">
+          <div className="relative w-full aspect-[4/3] sm:aspect-[3/4] md:aspect-auto md:h-full md:min-h-[450px] rounded-2xl overflow-hidden group">
             <img
               src={farmPeppers}
               alt="Nos champs de piments"
@@ -118,7 +118,7 @@ const ValuesSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.25 }}
-          className="col-span-1 md:col-span-2"
+          className="sm:col-span-2 md:col-span-2"
         >
           <div className="relative aspect-[16/9] md:aspect-[2/1] rounded-2xl overflow-hidden group">
             <img
