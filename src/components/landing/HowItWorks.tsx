@@ -1,34 +1,34 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import freshProduce from "@/assets/fresh-produce-grid.jpg";
-import aerialFarm from "@/assets/aerial-farm.jpg";
-import farmerPortrait from "@/assets/farmer-portrait.jpg";
-import greenFields from "@/assets/green-fields.jpg";
+import farmPeppers from "@/assets/farm-peppers.jpg";
+import farmFieldWide from "@/assets/farm-field-wide.jpg";
+import farmTeam from "@/assets/farm-team.jpg";
+import farmNursery1 from "@/assets/farm-nursery-1.jpg";
 
 const services = [
   {
     tag: "Sélection",
     title: "Produits Triés sur le Volet",
     desc: "Chaque produit est sélectionné directement auprès de nos producteurs partenaires pour garantir fraîcheur et qualité.",
-    image: freshProduce,
+    image: farmPeppers,
   },
   {
     tag: "Agriculture",
     title: "Agriculture Responsable",
     desc: "Nous collaborons avec des producteurs qui pratiquent une agriculture respectueuse de la terre et des saisons.",
-    image: aerialFarm,
+    image: farmFieldWide,
   },
   {
     tag: "Traçabilité",
     title: "Du Champ à Votre Table",
     desc: "Suivez le parcours de chaque produit, de la récolte jusqu'à votre porte, en toute transparence.",
-    image: farmerPortrait,
+    image: farmTeam,
   },
   {
     tag: "Bio & Local",
     title: "Produits 100% Naturels",
     desc: "Zéro pesticide, zéro intermédiaire. Des produits cultivés naturellement par nos partenaires locaux.",
-    image: greenFields,
+    image: farmNursery1,
   },
 ];
 
