@@ -541,7 +541,7 @@ const ProductDetail = () => {
                     disabled={product.stock <= 0}
                     className="w-full bg-foreground text-background py-4 rounded-2xl font-headline font-bold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-40"
                   >
-                    <span className="material-symbols-outlined text-lg">shopping_bag</span>
+                    <span className="material-symbols-outlined text-lg">shopping_basket</span>
                     Ajouter au panier
                   </button>
 
