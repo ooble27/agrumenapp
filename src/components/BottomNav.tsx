@@ -16,7 +16,7 @@ const BottomNav = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  if (location.pathname === "/" || location.pathname.startsWith("/dashboard")) return null;
+  if (location.pathname === "/" || location.pathname.startsWith("/dashboard") || location.pathname.startsWith("/produit/")) return null;
 
   const getProfilePath = () => (user ? (role === "seller" ? "/dashboard" : "/mon-compte") : "/auth");
   const isProfileActive = isActive("/mon-compte") || isActive("/auth");
