@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import farmPeppers from "@/assets/farm-peppers.jpg";
-import farmTeam from "@/assets/farm-team.jpg";
+import seedlingGrow1 from "@/assets/seedling-grow-1.jpg";
 import farmNursery1 from "@/assets/farm-nursery-1.jpg";
 import farmNursery3 from "@/assets/farm-nursery-3.jpg";
 import farmFieldWide from "@/assets/farm-field-wide.jpg";
