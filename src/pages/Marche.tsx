@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState, useMemo } from "react";
@@ -61,8 +61,24 @@ const Marche = () => {
   const [dbProducts, setDbProducts] = useState<Product[]>([]);
   const [dbCategories, setDbCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(searchParams.get("cat"));
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Sync selectedCategory from URL query param
+  useEffect(() => {
+    const cat = searchParams.get("cat");
+    if (cat) setSelectedCategory(cat);
+  }, [searchParams]);
+
+  const handleCategoryChange = (catId: string | null) => {
+    setSelectedCategory(catId);
+    if (catId) {
+      setSearchParams({ cat: catId });
+    } else {
+      setSearchParams({});
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -193,7 +209,7 @@ const Marche = () => {
         <section className="px-5 md:px-12 mt-4 md:mb-6 max-w-[1440px] mx-auto">
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             <button
-              onClick={() => setSelectedCategory(null)}
+              onClick={() => handleCategoryChange(null)}
               className={`shrink-0 px-4 py-2 rounded-xl text-xs font-headline font-bold transition-colors ${
                 !selectedCategory
                   ? "bg-foreground text-background"
@@ -205,7 +221,7 @@ const Marche = () => {
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.id === selectedCategory ? null : cat.id)}
+                onClick={() => handleCategoryChange(cat.id === selectedCategory ? null : cat.id)}
                 className={`shrink-0 px-4 py-2 rounded-xl text-xs font-headline font-bold transition-colors flex items-center gap-1.5 ${
                   selectedCategory === cat.id
                     ? "bg-foreground text-background"
