@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
@@ -30,6 +30,71 @@ type ShopInfo = {
 
 const ITEMS_PER_BATCH = 12;
 
+const normalizeCategory = (name?: string | null) => name?.trim().toLowerCase() || "__uncategorized__";
+
+const getStableOffset = (value: string) => Array.from(value).reduce((total, char) => total + char.charCodeAt(0), 0);
+
+const rotateItems = <T,>(items: T[], offset: number) => {
+  if (items.length <= 1) return items;
+  const start = offset % items.length;
+  return [...items.slice(start), ...items.slice(0, start)];
+};
+
+const buildRelatedProducts = (currentProduct: Product, candidates: Product[], limit = ITEMS_PER_BATCH) => {
+  const seen = new Set<string>();
+  const uniqueCandidates = candidates.filter((candidate) => {
+    if (candidate.id === currentProduct.id || seen.has(candidate.id)) return false;
+    seen.add(candidate.id);
+    return true;
+  });
+
+  const currentCategory = normalizeCategory(currentProduct.categories?.name);
+  const featuredSameCategoryCount = currentCategory === "__uncategorized__" ? 0 : Math.min(4, limit);
+  const sameCategory = uniqueCandidates.filter(
+    (candidate) => normalizeCategory(candidate.categories?.name) === currentCategory
+  );
+  const otherCategories = uniqueCandidates.filter(
+    (candidate) => normalizeCategory(candidate.categories?.name) !== currentCategory
+  );
+
+  const sameCategoryRotated = rotateItems(sameCategory, getStableOffset(`${currentProduct.id}${currentProduct.name}`));
+  const groupedOthers = new Map<string, Product[]>();
+
+  rotateItems(otherCategories, getStableOffset(`${currentProduct.name}${currentProduct.id}`)).forEach((candidate) => {
+    const key = normalizeCategory(candidate.categories?.name);
+    const bucket = groupedOthers.get(key) ?? [];
+    bucket.push(candidate);
+    groupedOthers.set(key, bucket);
+  });
+
+  const curated: Product[] = [];
+  const pushUnique = (candidate: Product) => {
+    if (!curated.some((item) => item.id === candidate.id)) {
+      curated.push(candidate);
+    }
+  };
+
+  sameCategoryRotated.slice(0, featuredSameCategoryCount).forEach(pushUnique);
+
+  const buckets = Array.from(groupedOthers.values());
+  for (let index = 0; curated.length < limit && buckets.some((bucket) => index < bucket.length); index += 1) {
+    for (const bucket of buckets) {
+      const candidate = bucket[index];
+      if (!candidate) continue;
+      pushUnique(candidate);
+      if (curated.length === limit) break;
+    }
+  }
+
+  if (curated.length < limit) {
+    sameCategoryRotated.slice(featuredSameCategoryCount).forEach((candidate) => {
+      if (curated.length < limit) pushUnique(candidate);
+    });
+  }
+
+  return curated.slice(0, limit);
+};
+
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -37,30 +102,12 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [shop, setShop] = useState<ShopInfo | null>(null);
   const [images, setImages] = useState<string[]>([]);
-  const [allRelated, setAllRelated] = useState<Product[]>([]);
-  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_BATCH);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [sellerProfile, setSellerProfile] = useState<SellerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [currentImage, setCurrentImage] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  // Infinite scroll observer
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && visibleCount < allRelated.length) {
-          setVisibleCount((c) => Math.min(c + ITEMS_PER_BATCH, allRelated.length));
-        }
-      },
-      { rootMargin: "600px" }
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [visibleCount, allRelated.length]);
 
   useEffect(() => {
     if (!id) return;
@@ -71,8 +118,7 @@ const ProductDetail = () => {
     setProduct(null);
     setShop(null);
     setImages([]);
-    setAllRelated([]);
-    setVisibleCount(ITEMS_PER_BATCH);
+    setRelatedProducts([]);
     setSellerProfile(null);
 
     const load = async () => {
@@ -83,10 +129,7 @@ const ProductDetail = () => {
         setShop(mockProduct.mockShop);
         setSellerProfile(mockProduct.mockSellerProfile);
         setImages(mockProduct.mockImages.length > 0 ? mockProduct.mockImages : mockProduct.image_url ? [mockProduct.image_url] : []);
-        // Get ALL mock products from same + other categories for more variety
-        const sameCat = getMockRelatedProducts(mockProduct, 50);
-        const otherProducts = MOCK_PRODUCTS.filter((p) => p.id !== mockProduct.id && !sameCat.find((s) => s.id === p.id));
-        setAllRelated([...sameCat, ...otherProducts]);
+        setRelatedProducts(buildRelatedProducts(mockProduct, [...getMockRelatedProducts(mockProduct, 50), ...MOCK_PRODUCTS]));
         setLoading(false);
         return;
       }
@@ -137,7 +180,9 @@ const ProductDetail = () => {
         .eq("is_active", true)
         .neq("id", id)
         .limit(50);
-      if (rel) setAllRelated(rel as Product[]);
+      if (rel) {
+        setRelatedProducts(buildRelatedProducts(product, rel as Product[]));
+      }
 
       setLoading(false);
     };
@@ -220,7 +265,7 @@ const ProductDetail = () => {
   const sellerName = sellerProfile?.full_name || shop?.name || "Producteur";
   const sellerCity = sellerProfile?.city || shop?.city || "Sénégal";
   const totalPrice = product.price * quantity;
-  const visibleRelated = allRelated.slice(0, visibleCount);
+  const visibleRelated = relatedProducts;
 
   return (
     <div className="min-h-screen bg-background">
@@ -364,8 +409,8 @@ const ProductDetail = () => {
 
           <div className="h-2 bg-surface-container" />
 
-          {/* Related products — grid with infinite scroll */}
-          {allRelated.length > 0 && (
+          {/* Related products */}
+          {relatedProducts.length > 0 && (
             <div className="px-5 py-5">
               <h3 className="font-headline font-extrabold text-lg mb-4">Vous aimerez aussi</h3>
               <div className="grid grid-cols-2 gap-3">
@@ -373,11 +418,6 @@ const ProductDetail = () => {
                   <ProductCard key={p.id} product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
                 ))}
               </div>
-              {visibleCount < allRelated.length && (
-                <div ref={sentinelRef} className="flex justify-center py-8">
-                  <span className="material-symbols-outlined text-2xl text-on-surface-variant/40 animate-spin">progress_activity</span>
-                </div>
-              )}
             </div>
           )}
 
@@ -587,8 +627,8 @@ const ProductDetail = () => {
             </div>
           </section>
 
-          {/* Related products — with infinite scroll */}
-          {allRelated.length > 0 && (
+          {/* Related products */}
+          {relatedProducts.length > 0 && (
             <section className="py-12 px-6 md:px-12 max-w-[1440px] mx-auto border-t border-border/20">
               <h2 className="text-2xl font-headline font-extrabold tracking-tight mb-6">Vous aimerez aussi</h2>
               <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
@@ -596,11 +636,6 @@ const ProductDetail = () => {
                   <ProductCard key={p.id} product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
                 ))}
               </div>
-              {visibleCount < allRelated.length && (
-                <div ref={sentinelRef} className="flex justify-center py-10">
-                  <span className="material-symbols-outlined text-3xl text-on-surface-variant/30 animate-spin">progress_activity</span>
-                </div>
-              )}
             </section>
           )}
         </div>
