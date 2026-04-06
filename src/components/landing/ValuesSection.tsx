@@ -2,8 +2,9 @@ import { motion } from "framer-motion";
 import farmPeppers from "@/assets/farm-peppers.jpg";
 import farmTeam from "@/assets/farm-team.jpg";
 import farmNursery1 from "@/assets/farm-nursery-1.jpg";
-import farmNursery2 from "@/assets/farm-nursery-2.jpg";
+import farmNursery3 from "@/assets/farm-nursery-3.jpg";
 import farmFieldWide from "@/assets/farm-field-wide.jpg";
+import seedlingClose from "@/assets/seedling-close.jpg";
 
 const ValuesSection = () => {
   return (
@@ -98,7 +99,7 @@ const ValuesSection = () => {
         >
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
             <img
-              src={farmNursery2}
+              src={farmNursery3}
               alt="Culture en croissance"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
@@ -145,15 +146,15 @@ const ValuesSection = () => {
         >
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
             <img
-              src={farmPeppers}
-              alt="Plantation de piments"
-              className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+              src={seedlingClose}
+              alt="Jeune pousse"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
               width={400}
               height={300}
             />
             <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Agriculture Bio</span>
+              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Jeunes Pousses</span>
             </div>
           </div>
         </motion.div>
