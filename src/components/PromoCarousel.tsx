@@ -57,12 +57,15 @@ const banners = [
   },
   {
     id: 6,
-    bg: "bg-gradient-to-br from-[hsl(200,55%,45%)] to-[hsl(210,50%,38%)]",
+    bg: "bg-inverse-surface",
     badge: "Livraison 🚚",
     title: "Livré Chez Vous\nen 24h",
     cta: "Commander",
     link: "/marche",
     image: deliveryImg,
+    titleColor: "",
+    badgeColor: "bg-primary-container/20 text-primary-container",
+    ctaColor: "text-primary-container bg-primary-container/15",
   },
 ];
 
@@ -102,7 +105,8 @@ const PromoCarousel = () => {
         className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1"
       >
         {banners.map((banner, i) => {
-          const isLight = !!banner.titleColor;
+          const isDelivery = banner.id === 6;
+          const isLight = !!banner.titleColor && !isDelivery;
           return (
             <Link
               key={banner.id}
@@ -113,11 +117,11 @@ const PromoCarousel = () => {
                 <span className={`inline-block ${banner.badgeColor || "bg-white/20 backdrop-blur-sm text-white"} text-[10px] md:text-xs font-bold uppercase px-2.5 py-1 rounded mb-2`}>
                   {banner.badge}
                 </span>
-                <h3 className={`${isLight ? banner.titleColor : "text-white"} font-headline font-bold text-base md:text-xl leading-tight mb-2 whitespace-pre-line`}>
+                <h3 className={`${isDelivery ? "text-surface" : isLight ? banner.titleColor : "text-white"} font-headline font-bold text-base md:text-xl leading-tight mb-2 whitespace-pre-line`}>
                   {banner.title}
                 </h3>
                 <span
-                  className={`inline-flex items-center gap-1 ${isLight ? "text-[hsl(30,50%,15%)] bg-[hsl(30,60%,30%)]/15" : "text-white bg-white/20"} text-xs font-semibold px-3 py-1.5 rounded-md group-hover:opacity-80 transition-opacity`}
+                  className={`inline-flex items-center gap-1 ${banner.ctaColor || (isLight ? "text-[hsl(30,50%,15%)] bg-[hsl(30,60%,30%)]/15" : "text-white bg-white/20")} text-xs font-semibold px-3 py-1.5 rounded-md group-hover:opacity-80 transition-opacity`}
                 >
                   {banner.cta}
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -126,7 +130,7 @@ const PromoCarousel = () => {
               <img
                 src={banner.image}
                 alt=""
-                className="w-36 md:w-44 h-36 md:h-44 object-contain -mr-2 -mb-4 -mt-2 relative z-10 drop-shadow-lg"
+                className={`${banner.id === 6 ? "w-44 md:w-52 h-44 md:h-52" : "w-36 md:w-44 h-36 md:h-44"} object-contain -mr-2 -mb-4 -mt-2 relative z-10 drop-shadow-lg`}
                 loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
                 width={512}
