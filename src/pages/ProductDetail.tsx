@@ -158,10 +158,8 @@ const ProductDetail = () => {
 
   const formatPrice = (n: number) => n.toLocaleString("fr-FR") + " FCFA";
 
-  const isMockProduct = product?.id.startsWith("m") ?? false;
-
   const handleAddToCart = useCallback(() => {
-    if (!product || isMockProduct) return;
+    if (!product) return;
     for (let i = 0; i < quantity; i++) {
       addItem({
         id: product.id,
@@ -174,12 +172,11 @@ const ProductDetail = () => {
         shopId: product.shop_id,
       });
     }
-  }, [product, isMockProduct, quantity, images, sellerProfile, shop, addItem]);
+  }, [product, quantity, images, sellerProfile, shop, addItem]);
 
   const handleAddRelated = (p: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (p.id.startsWith("m")) return;
     addItem({
       id: p.id,
       name: p.name,
@@ -309,21 +306,21 @@ const ProductDetail = () => {
             </div>
           </div>
 
-          {/* Quantity selector — pill style */}
+          {/* Quantity selector — compact, left-aligned */}
           <div className="px-5 py-3">
-            <div className="flex items-center justify-between bg-surface-container rounded-2xl p-1">
+            <div className="inline-flex items-center bg-surface-container rounded-xl">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-background transition-colors"
+                className="w-9 h-9 flex items-center justify-center rounded-l-xl hover:bg-background transition-colors"
               >
-                <span className="material-symbols-outlined text-lg text-on-surface-variant">remove</span>
+                <span className="material-symbols-outlined text-base text-on-surface-variant">remove</span>
               </button>
-              <span className="font-headline font-extrabold text-lg px-4">{quantity}</span>
+              <span className="w-10 text-center font-headline font-extrabold text-sm">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-background transition-colors"
+                className="w-9 h-9 flex items-center justify-center rounded-r-xl bg-primary text-primary-foreground"
               >
-                <span className="material-symbols-outlined text-lg text-on-surface-variant">add</span>
+                <span className="material-symbols-outlined text-base">add</span>
               </button>
             </div>
           </div>
@@ -388,17 +385,11 @@ const ProductDetail = () => {
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border/20 px-5 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
             <button
               onClick={handleAddToCart}
-              disabled={product.stock <= 0 || isMockProduct}
+              disabled={product.stock <= 0}
               className="w-full bg-foreground text-background py-4 rounded-2xl font-headline font-bold text-[15px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform disabled:opacity-40"
             >
-              {isMockProduct
-                ? "Produit démo · bientôt disponible"
-                : (
-                  <>
-                    <span className="material-symbols-outlined text-lg">shopping_bag</span>
-                    Ajouter {quantity > 1 ? `(${quantity})` : ""} · {formatPrice(totalPrice)}
-                  </>
-                )}
+              <span className="material-symbols-outlined text-lg">shopping_bag</span>
+              Ajouter {quantity > 1 ? `(${quantity})` : ""} · {formatPrice(totalPrice)}
             </button>
           </div>
         </div>
@@ -496,7 +487,7 @@ const ProductDetail = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.15 }}
-                className="lg:sticky lg:top-28"
+                className=""
               >
                 <div className="bg-background border border-border/30 rounded-2xl p-6 shadow-sm">
                   {/* Category */}
@@ -547,15 +538,11 @@ const ProductDetail = () => {
                   {/* Add to cart */}
                   <button
                     onClick={handleAddToCart}
-                    disabled={product.stock <= 0 || isMockProduct}
+                    disabled={product.stock <= 0}
                     className="w-full bg-foreground text-background py-4 rounded-2xl font-headline font-bold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-40"
                   >
-                    {isMockProduct ? "Produit démo · bientôt disponible" : (
-                      <>
-                        <span className="material-symbols-outlined text-lg">shopping_bag</span>
-                        Ajouter au panier
-                      </>
-                    )}
+                    <span className="material-symbols-outlined text-lg">shopping_bag</span>
+                    Ajouter au panier
                   </button>
 
                   {/* Divider */}
