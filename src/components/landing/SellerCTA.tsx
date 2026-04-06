@@ -119,13 +119,13 @@ const SellerCTA = () => {
           </div>
 
           {/* Right — moto illustration */}
-          <div className="relative flex items-center justify-center p-6 lg:p-10">
+          <div className="relative flex items-center justify-center lg:justify-start p-6 lg:p-10 lg:pl-0">
             <motion.img
               src={deliveryMoto}
               alt="Livraison à moto"
-              className="w-full max-w-[500px] lg:max-w-[580px] h-auto drop-shadow-2xl"
+              className="w-full max-w-[520px] lg:max-w-[620px] h-auto drop-shadow-2xl"
               loading="lazy"
-              width={1024}
+              width={1376}
               height={768}
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}

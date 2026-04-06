@@ -5,7 +5,7 @@ import papayaImg from "@/assets/papaya-promo.webp";
 import vegetablesImg from "@/assets/vegetables-promo.webp";
 import fruitsPromo from "@/assets/fruits-promo.webp";
 import spicesImg from "@/assets/spices-promo.webp";
-import deliveryImg from "@/assets/delivery-promo.webp";
+import deliveryImg from "@/assets/delivery-moto.png";
 
 const banners = [
   {
