@@ -95,7 +95,7 @@ const ProductDetail = () => {
         .select("*, categories(name, icon)")
         .eq("is_active", true)
         .neq("id", id)
-        .limit(8);
+        .limit(18);
       if (rel) setRelated(rel as Product[]);
 
       setLoading(false);
@@ -313,11 +313,9 @@ const ProductDetail = () => {
           {related.length > 0 && (
             <div className="px-5 py-4">
               <h3 className="font-headline font-extrabold text-base mb-3">Produits similaires</h3>
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-                {related.map(p => (
-                  <div key={p.id} className="shrink-0 w-[150px]">
-                    <ProductCard product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} />
-                  </div>
+              <div className="grid grid-cols-3 gap-3">
+                {related.map((p, i) => (
+                  <ProductCard key={p.id} product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
                 ))}
               </div>
             </div>
