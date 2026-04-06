@@ -30,6 +30,11 @@ const Navbar = () => {
               Mon Compte
             </Link>
           )}
+          {user && role === "seller" && (
+            <Link to="/dashboard" className="font-headline font-extrabold uppercase tracking-tight text-sm text-on-surface-variant hover:text-foreground hover:scale-95 transition-transform duration-200">
+              Mes Produits
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center gap-3">
