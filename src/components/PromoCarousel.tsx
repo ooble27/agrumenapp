@@ -53,7 +53,7 @@ const banners = [
     title: "Piments &\nÉpices Locales",
     cta: "Explorer",
     link: "/marche",
-    image: vegetablesImg,
+    image: spicesImg,
   },
   {
     id: 6,
@@ -62,7 +62,7 @@ const banners = [
     title: "Livré Chez Vous\nen 24h",
     cta: "Commander",
     link: "/marche",
-    image: fruitsPromo,
+    image: deliveryImg,
   },
 ];
 
