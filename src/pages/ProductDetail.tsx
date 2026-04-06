@@ -28,7 +28,7 @@ type ShopInfo = {
   location: string | null;
 };
 
-const ITEMS_PER_BATCH = 6;
+const ITEMS_PER_BATCH = 12;
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -56,7 +56,7 @@ const ProductDetail = () => {
           setVisibleCount((c) => Math.min(c + ITEMS_PER_BATCH, allRelated.length));
         }
       },
-      { rootMargin: "200px" }
+      { rootMargin: "600px" }
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
@@ -591,7 +591,7 @@ const ProductDetail = () => {
           {allRelated.length > 0 && (
             <section className="py-12 px-6 md:px-12 max-w-[1440px] mx-auto border-t border-border/20">
               <h2 className="text-2xl font-headline font-extrabold tracking-tight mb-6">Vous aimerez aussi</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                 {visibleRelated.map((p, i) => (
                   <ProductCard key={p.id} product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
                 ))}
