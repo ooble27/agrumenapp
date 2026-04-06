@@ -26,56 +26,39 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-16 md:pb-0 relative">
-      {/* Floating hamburger menu */}
-      <div className="fixed top-4 right-4 z-[60]">
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="w-11 h-11 flex items-center justify-center rounded-full bg-background/80 backdrop-blur-xl shadow-lg border border-border/30"
-          aria-label="Menu"
-        >
-          <span className="material-symbols-outlined text-2xl text-foreground">
-            {menuOpen ? "close" : "menu"}
-          </span>
-        </button>
-      </div>
-
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="fixed top-16 right-4 z-[60] bg-background/95 backdrop-blur-xl rounded-2xl shadow-xl border border-border/30 min-w-[200px] overflow-hidden"
-          >
-            <div className="flex flex-col p-3 gap-1">
-              <Link to="/marche" onClick={() => setMenuOpen(false)} className="font-headline font-extrabold uppercase tracking-tight text-sm text-on-surface-variant hover:text-foreground py-3 px-4 rounded-xl hover:bg-surface-container transition-colors">
-                Marché
+    <div className="min-h-screen bg-inverse-surface relative">
+      {/* Landing page navbar */}
+      <nav className="fixed top-0 w-full z-[60] bg-transparent">
+        <div className="flex items-center justify-between px-5 md:px-10 py-4 max-w-[1440px] mx-auto">
+          <Link to="/" className="text-xl font-black tracking-tighter text-white font-headline">
+            Agrumen
+          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/marche" className="text-white/80 hover:text-white text-sm font-headline font-semibold px-4 py-2 transition-colors">
+              Marché
+            </Link>
+            {user ? (
+              <Link
+                to={role === "seller" ? "/dashboard" : "/mon-compte"}
+                className="text-white/80 hover:text-white text-sm font-headline font-semibold px-4 py-2 transition-colors"
+              >
+                Mon Compte
               </Link>
-              {user ? (
-                <>
-                  {role === "seller" ? (
-                    <Link to="/dashboard" onClick={() => setMenuOpen(false)} className="font-headline font-extrabold uppercase tracking-tight text-sm text-on-surface-variant hover:text-foreground py-3 px-4 rounded-xl hover:bg-surface-container transition-colors">
-                      Mes Produits
-                    </Link>
-                  ) : (
-                    <Link to="/mon-compte" onClick={() => setMenuOpen(false)} className="font-headline font-extrabold uppercase tracking-tight text-sm text-on-surface-variant hover:text-foreground py-3 px-4 rounded-xl hover:bg-surface-container transition-colors">
-                      Mon Compte
-                    </Link>
-                  )}
-                </>
-              ) : (
-                <Link to="/auth" onClick={() => setMenuOpen(false)} className="font-headline font-extrabold uppercase tracking-tight text-sm text-primary py-3 px-4 rounded-xl hover:bg-surface-container transition-colors">
+            ) : (
+              <>
+                <Link to="/auth" className="text-white/80 hover:text-white text-sm font-headline font-semibold px-4 py-2 transition-colors">
                   Connexion
                 </Link>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                <Link to="/auth?role=seller" className="bg-primary-container text-primary-container-foreground text-sm font-headline font-bold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity">
+                  Commencer
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      </nav>
 
-      <main className="pt-4">
+      <main className="pt-0">
         {/* ═══════ HERO ═══════ */}
         <section className="px-4 md:px-12 py-4 md:py-8 max-w-[1440px] mx-auto">
           <div className="relative rounded-[2rem] md:rounded-[2.5rem] overflow-hidden min-h-[85vh] md:min-h-[700px] flex items-end md:items-center">

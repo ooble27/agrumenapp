@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="w-full mt-16 md:mt-20 bg-inverse-surface">
+    <footer className="w-full mt-16 md:mt-20 bg-inverse-surface rounded-t-3xl">
       <div className="flex flex-col md:flex-row justify-between items-center px-6 md:px-12 py-8 md:py-10 w-full gap-6">
         <div className="flex flex-col items-center md:items-start gap-3">
           <Link to="/" className="text-lg font-bold text-surface font-headline">Agrumen</Link>

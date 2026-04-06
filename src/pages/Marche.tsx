@@ -143,10 +143,10 @@ const Marche = () => {
         <section className="px-5 md:px-12 pt-2 md:pt-4 max-w-[1440px] mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-xl md:text-2xl font-headline font-black tracking-tight">
+              <p className="text-xl md:text-2xl font-headline font-bold tracking-tight">
                 Salut{user ? `, ${firstName}` : ""} 👋
               </p>
-              <p className="text-xs md:text-sm text-on-surface-variant font-medium">Qu'est-ce qu'on cuisine aujourd'hui ?</p>
+              <p className="text-xs md:text-sm text-on-surface-variant font-normal">Qu'est-ce qu'on cuisine aujourd'hui ?</p>
             </div>
             <div className="flex items-center gap-3">
               <span className="hidden md:inline text-sm text-on-surface-variant font-headline font-bold">
@@ -173,17 +173,17 @@ const Marche = () => {
 
         {/* ═══════ PROMO BANNER — all screens ═══════ */}
         <section className="px-5 md:px-12 mt-4 max-w-[1440px] mx-auto">
-          <div className="relative bg-[hsl(45,100%,94%)] rounded-lg p-5 md:p-8 flex items-center overflow-hidden">
+          <div className="relative bg-[hsl(78,60%,35%)] rounded-lg p-5 md:p-8 flex items-center overflow-hidden">
             <div className="flex-1 relative z-10">
-              <span className="inline-block bg-[hsl(45,100%,60%)] text-foreground text-[10px] md:text-xs font-black uppercase px-2.5 py-1 rounded mb-2">
+              <span className="inline-block bg-primary-container text-primary-container-foreground text-[10px] md:text-xs font-bold uppercase px-2.5 py-1 rounded mb-2">
                 Nouveau 🌿
               </span>
-              <h3 className="text-foreground font-headline font-black text-xl md:text-2xl leading-tight mb-1">
+              <h3 className="text-white font-headline font-bold text-lg md:text-2xl leading-tight mb-1">
                 Produits Frais<br />Chaque Jour
               </h3>
               <Link
                 to="/marche"
-                className="inline-flex items-center gap-1 text-foreground text-xs md:text-sm font-black mt-2 underline underline-offset-4"
+                className="inline-flex items-center gap-1 text-white text-xs md:text-sm font-semibold mt-2 bg-white/20 px-3 py-1.5 rounded-md hover:bg-white/30 transition-colors"
               >
                 Voir tout
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -198,7 +198,7 @@ const Marche = () => {
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             <button
               onClick={() => handleCategoryChange(null)}
-              className={`shrink-0 px-4 py-2 rounded-md text-xs font-headline font-black transition-colors ${
+              className={`shrink-0 px-4 py-2 rounded-md text-xs font-headline font-semibold transition-colors ${
                   !selectedCategoryKey
                   ? "bg-foreground text-background"
                   : "bg-surface-container text-on-surface-variant"
@@ -210,7 +210,7 @@ const Marche = () => {
               <button
                 key={cat.id}
                 onClick={() => handleCategoryChange(isCategorySelected(cat) ? null : cat.id)}
-                className={`shrink-0 px-4 py-2 rounded-md text-xs font-headline font-black transition-colors flex items-center gap-1.5 ${
+                className={`shrink-0 px-4 py-2 rounded-md text-xs font-headline font-semibold transition-colors flex items-center gap-1.5 ${
                   isCategorySelected(cat)
                     ? "bg-foreground text-background"
                     : "bg-surface-container text-on-surface-variant"
