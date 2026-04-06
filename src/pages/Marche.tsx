@@ -6,54 +6,11 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import fruitsPromo from "@/assets/fruits-promo.png";
-import type { Product as BaseProduct, Category } from "@/types/database";
+import { buildMarketCategories, getCategoryKey, MOCK_PRODUCTS, type MarketProduct } from "@/data/marketplaceMocks";
+import type { Category } from "@/types/database";
 import ProductCard from "@/components/ProductCard";
 
-type Product = BaseProduct & {
-  shops: { name: string; seller_id: string } | null;
-  categories: { name: string; icon: string | null } | null;
-};
-
-/* ═══════ MOCK DATA for preview ═══════ */
-const MOCK_CATEGORIES: Category[] = [
-  { id: "cat-fruits", name: "Fruits", icon: "nutrition", created_at: "" },
-  { id: "cat-legumes", name: "Légumes", icon: "eco", created_at: "" },
-  { id: "cat-cereales", name: "Céréales", icon: "grain", created_at: "" },
-  { id: "cat-tubercules", name: "Tubercules", icon: "spa", created_at: "" },
-  { id: "cat-epices", name: "Épices", icon: "local_fire_department", created_at: "" },
-];
-
-const mockProduct = (id: string, name: string, price: number, unit: string, catId: string, img: string): Product => ({
-  id, name, price, unit, category_id: catId, shop_id: "mock-shop",
-  image_url: img, description: "", stock: 50, is_active: true,
-  created_at: "", updated_at: "",
-  shops: { name: "Ferme Bio Dakar", seller_id: "mock-seller" },
-  categories: MOCK_CATEGORIES.find(c => c.id === catId) ? { name: MOCK_CATEGORIES.find(c => c.id === catId)!.name, icon: MOCK_CATEGORIES.find(c => c.id === catId)!.icon } : null,
-});
-
-const MOCK_PRODUCTS: Product[] = [
-  mockProduct("m1", "Banane Plantain", 500, "le kg", "cat-fruits", "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&h=400&fit=crop"),
-  mockProduct("m2", "Oranges", 700, "le kg", "cat-fruits", "https://images.unsplash.com/photo-1547514701-42782101795e?w=400&h=400&fit=crop"),
-  mockProduct("m3", "Mangues Kent", 1500, "le kg", "cat-fruits", "https://images.unsplash.com/photo-1553279768-865429fa0078?w=400&h=400&fit=crop"),
-  mockProduct("m4", "Papaye", 800, "la pièce", "cat-fruits", "https://images.unsplash.com/photo-1517282009859-f000ec3b26fe?w=400&h=400&fit=crop"),
-  mockProduct("m5", "Pastèque", 2000, "la pièce", "cat-fruits", "https://images.unsplash.com/photo-1589984662646-e7b2e4962f18?w=400&h=400&fit=crop"),
-  mockProduct("m6", "Pomme Verte", 1000, "le kg", "cat-fruits", "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=400&fit=crop"),
-  mockProduct("m7", "Ananas", 1200, "la pièce", "cat-fruits", "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=400&h=400&fit=crop"),
-  mockProduct("m8", "Citron Vert", 300, "le kg", "cat-fruits", "https://images.unsplash.com/photo-1590502593747-42a996133562?w=400&h=400&fit=crop"),
-  mockProduct("m11", "Oignons", 350, "le kg", "cat-legumes", "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=400&h=400&fit=crop"),
-  mockProduct("m12", "Piment Rouge", 600, "le kg", "cat-legumes", "https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=400&h=400&fit=crop"),
-  mockProduct("m13", "Aubergine", 450, "le kg", "cat-legumes", "https://images.unsplash.com/photo-1615484477778-ca3b77940c25?w=400&h=400&fit=crop"),
-  mockProduct("m14", "Gombo", 500, "le kg", "cat-legumes", "https://images.unsplash.com/photo-1425543103986-22abb7d7e8d2?w=400&h=400&fit=crop"),
-  mockProduct("m15", "Poivron Vert", 550, "le kg", "cat-legumes", "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=400&h=400&fit=crop"),
-  mockProduct("m16", "Concombre", 300, "le kg", "cat-legumes", "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=400&h=400&fit=crop"),
-  mockProduct("m17", "Carotte", 400, "le kg", "cat-legumes", "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&h=400&fit=crop"),
-  mockProduct("m20", "Riz Brisé", 500, "le kg", "cat-cereales", "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop"),
-  mockProduct("m21", "Mil", 400, "le kg", "cat-cereales", "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&h=400&fit=crop"),
-  mockProduct("m22", "Maïs", 350, "le kg", "cat-cereales", "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400&h=400&fit=crop"),
-  mockProduct("m31", "Igname", 600, "le kg", "cat-tubercules", "https://images.unsplash.com/photo-1590165482129-1b8b27698780?w=400&h=400&fit=crop"),
-  mockProduct("m41", "Curcuma", 3000, "le kg", "cat-epices", "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=400&h=400&fit=crop"),
-  mockProduct("m42", "Gingembre", 1500, "le kg", "cat-epices", "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=400&h=400&fit=crop"),
-];
+type Product = MarketProduct;
 
 const Marche = () => {
   const { addItem } = useCart();
@@ -62,22 +19,21 @@ const Marche = () => {
   const [dbCategories, setDbCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(searchParams.get("cat"));
+  const selectedCategory = searchParams.get("cat");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Sync selectedCategory from URL query param
-  useEffect(() => {
-    const cat = searchParams.get("cat");
-    if (cat) setSelectedCategory(cat);
-  }, [searchParams]);
-
   const handleCategoryChange = (catId: string | null) => {
-    setSelectedCategory(catId);
-    if (catId) {
-      setSearchParams({ cat: catId });
-    } else {
-      setSearchParams({});
-    }
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
+
+      if (catId) {
+        next.set("cat", catId);
+      } else {
+        next.delete("cat");
+      }
+
+      return next;
+    });
   };
 
   useEffect(() => {
@@ -105,27 +61,35 @@ const Marche = () => {
     return [...dbProducts, ...mocks];
   }, [dbProducts]);
 
-  const categories = useMemo(() => {
-    if (dbCategories.length > 0) {
-      // Merge mock categories not already in DB
-      const dbNames = new Set(dbCategories.map(c => c.name.toLowerCase()));
-      const extra = MOCK_CATEGORIES.filter(mc => !dbNames.has(mc.name.toLowerCase()));
-      return [...dbCategories, ...extra];
-    }
-    return MOCK_CATEGORIES;
-  }, [dbCategories]);
+  const categories = useMemo(() => buildMarketCategories(dbCategories), [dbCategories]);
 
-  // Build a set of category IDs that match the selected category (handles DB UUID + mock string IDs)
-  const matchingCatIds = useMemo(() => {
+  const categoryKeyById = useMemo(
+    () => new Map(categories.map((category) => [category.id, getCategoryKey(category.name) ?? category.id])),
+    [categories]
+  );
+
+  const selectedCategoryKey = useMemo(() => {
     if (!selectedCategory) return null;
-    const selected = categories.find(c => c.id === selectedCategory);
-    if (!selected) return new Set([selectedCategory]);
-    // Find all category IDs with the same name (covers DB + mock duplicates)
-    return new Set(categories.filter(c => c.name.toLowerCase() === selected.name.toLowerCase()).map(c => c.id));
-  }, [selectedCategory, categories]);
+    return categoryKeyById.get(selectedCategory) ?? getCategoryKey(selectedCategory);
+  }, [selectedCategory, categoryKeyById]);
+
+  const selectedCategoryLabel = useMemo(() => {
+    if (!selectedCategoryKey) return null;
+
+    return (
+      categories.find((category) => (getCategoryKey(category.name) ?? category.id) === selectedCategoryKey)?.name ??
+      "Catégorie"
+    );
+  }, [categories, selectedCategoryKey]);
+
+  const isCategorySelected = (category: Category) =>
+    selectedCategoryKey === (getCategoryKey(category.name) ?? category.id);
 
   const filtered = products.filter((p) => {
-    const matchCat = !matchingCatIds || (p.category_id && matchingCatIds.has(p.category_id));
+    const productCategoryKey =
+      getCategoryKey(p.categories?.name) ??
+      (p.category_id ? categoryKeyById.get(p.category_id) ?? getCategoryKey(p.category_id) : null);
+    const matchCat = !selectedCategoryKey || productCategoryKey === selectedCategoryKey;
     const matchSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
@@ -149,13 +113,6 @@ const Marche = () => {
   const formatPrice = (n: number) => n.toLocaleString("fr-FR");
   const firstName = profile?.full_name?.split(" ")[0] || "there";
 
-  const productsByCategory = categories
-    .map((cat) => ({
-      category: cat,
-      items: products.filter((p) => p.category_id === cat.id && p.is_active),
-    }))
-    .filter((group) => group.items.length > 0);
-
   return (
     <div className="min-h-screen bg-surface-container-lowest pb-20 md:pb-0">
       <Navbar />
@@ -166,15 +123,13 @@ const Marche = () => {
           <nav className="flex items-center gap-1.5 text-xs text-on-surface-variant">
             <Link to="/" className="hover:text-foreground transition-colors">Accueil</Link>
             <span className="material-symbols-outlined text-sm">chevron_right</span>
-            {selectedCategory ? (
+            {selectedCategoryKey ? (
               <>
                 <button onClick={() => handleCategoryChange(null)} className="hover:text-foreground transition-colors">
                   Marché
                 </button>
                 <span className="material-symbols-outlined text-sm">chevron_right</span>
-                <span className="text-foreground font-semibold">
-                  {categories.find(c => c.id === selectedCategory)?.name || "Catégorie"}
-                </span>
+                <span className="text-foreground font-semibold">{selectedCategoryLabel || "Catégorie"}</span>
               </>
             ) : (
               <span className="text-foreground font-semibold">Marché</span>
@@ -241,7 +196,7 @@ const Marche = () => {
             <button
               onClick={() => handleCategoryChange(null)}
               className={`shrink-0 px-4 py-2 rounded-xl text-xs font-headline font-bold transition-colors ${
-                !selectedCategory
+                  !selectedCategoryKey
                   ? "bg-foreground text-background"
                   : "bg-surface-container text-on-surface-variant"
               }`}
@@ -251,9 +206,9 @@ const Marche = () => {
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => handleCategoryChange(cat.id === selectedCategory ? null : cat.id)}
+                onClick={() => handleCategoryChange(isCategorySelected(cat) ? null : cat.id)}
                 className={`shrink-0 px-4 py-2 rounded-xl text-xs font-headline font-bold transition-colors flex items-center gap-1.5 ${
-                  selectedCategory === cat.id
+                  isCategorySelected(cat)
                     ? "bg-foreground text-background"
                     : "bg-surface-container text-on-surface-variant"
                 }`}
