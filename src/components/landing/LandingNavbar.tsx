@@ -22,7 +22,7 @@ const LandingNavbar = () => {
     >
       <div className="mx-4 mt-4 md:mx-8">
         <div
-          className={`mx-auto flex max-w-[1200px] items-center justify-between rounded-2xl border px-5 py-3 transition-all duration-300 md:px-8 ${
+          className={`mx-auto flex max-w-[1200px] items-center justify-between rounded-xl border px-5 py-3 transition-all duration-300 md:px-8 ${
             scrolled
               ? "border-border/70 bg-background/92 shadow-lg backdrop-blur-xl"
               : "border-border/60 bg-background/82 shadow-sm backdrop-blur-xl"
