@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import ProductCard from "@/components/ProductCard";
-import { findMockProduct, getMockRelatedProducts } from "@/data/marketplaceMocks";
+import { findMockProduct, getMockRelatedProducts, MOCK_PRODUCTS } from "@/data/marketplaceMocks";
 import type { Product as BaseProduct, ProductImage } from "@/types/database";
 
 type Product = BaseProduct & {
@@ -28,6 +28,8 @@ type ShopInfo = {
   location: string | null;
 };
 
+const ITEMS_PER_BATCH = 6;
+
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -35,12 +37,30 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [shop, setShop] = useState<ShopInfo | null>(null);
   const [images, setImages] = useState<string[]>([]);
-  const [related, setRelated] = useState<Product[]>([]);
+  const [allRelated, setAllRelated] = useState<Product[]>([]);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_BATCH);
   const [sellerProfile, setSellerProfile] = useState<SellerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [currentImage, setCurrentImage] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCount < allRelated.length) {
+          setVisibleCount((c) => Math.min(c + ITEMS_PER_BATCH, allRelated.length));
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [visibleCount, allRelated.length]);
 
   useEffect(() => {
     if (!id) return;
@@ -51,7 +71,8 @@ const ProductDetail = () => {
     setProduct(null);
     setShop(null);
     setImages([]);
-    setRelated([]);
+    setAllRelated([]);
+    setVisibleCount(ITEMS_PER_BATCH);
     setSellerProfile(null);
 
     const load = async () => {
@@ -62,7 +83,10 @@ const ProductDetail = () => {
         setShop(mockProduct.mockShop);
         setSellerProfile(mockProduct.mockSellerProfile);
         setImages(mockProduct.mockImages.length > 0 ? mockProduct.mockImages : mockProduct.image_url ? [mockProduct.image_url] : []);
-        setRelated(getMockRelatedProducts(mockProduct));
+        // Get ALL mock products from same + other categories for more variety
+        const sameCat = getMockRelatedProducts(mockProduct, 50);
+        const otherProducts = MOCK_PRODUCTS.filter((p) => p.id !== mockProduct.id && !sameCat.find((s) => s.id === p.id));
+        setAllRelated([...sameCat, ...otherProducts]);
         setLoading(false);
         return;
       }
@@ -107,18 +131,18 @@ const ProductDetail = () => {
       }
       setImages(imgList);
 
-      // Related products (same category)
       const { data: rel } = await supabase
         .from("products")
         .select("*, categories(name, icon)")
         .eq("is_active", true)
         .neq("id", id)
-        .limit(18);
-      if (rel) setRelated(rel as Product[]);
+        .limit(50);
+      if (rel) setAllRelated(rel as Product[]);
 
       setLoading(false);
     };
     load();
+    window.scrollTo(0, 0);
   }, [id]);
 
   const handleTouchStart = (e: React.TouchEvent) => setTouchStart(e.touches[0].clientX);
@@ -126,13 +150,47 @@ const ProductDetail = () => {
     if (touchStart === null) return;
     const diff = touchStart - e.changedTouches[0].clientX;
     if (Math.abs(diff) > 50) {
-      if (diff > 0 && currentImage < images.length - 1) setCurrentImage(c => c + 1);
-      if (diff < 0 && currentImage > 0) setCurrentImage(c => c - 1);
+      if (diff > 0 && currentImage < images.length - 1) setCurrentImage((c) => c + 1);
+      if (diff < 0 && currentImage > 0) setCurrentImage((c) => c - 1);
     }
     setTouchStart(null);
   };
 
   const formatPrice = (n: number) => n.toLocaleString("fr-FR") + " FCFA";
+
+  const isMockProduct = product?.id.startsWith("m") ?? false;
+
+  const handleAddToCart = useCallback(() => {
+    if (!product || isMockProduct) return;
+    for (let i = 0; i < quantity; i++) {
+      addItem({
+        id: product.id,
+        name: product.name,
+        price: formatPrice(product.price),
+        priceNum: product.price,
+        unit: product.unit,
+        image: images[0] || "/placeholder.svg",
+        farmer: sellerProfile?.full_name || shop?.name || "Vendeur",
+        shopId: product.shop_id,
+      });
+    }
+  }, [product, isMockProduct, quantity, images, sellerProfile, shop, addItem]);
+
+  const handleAddRelated = (p: Product, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (p.id.startsWith("m")) return;
+    addItem({
+      id: p.id,
+      name: p.name,
+      price: formatPrice(p.price),
+      priceNum: p.price,
+      unit: p.unit,
+      image: p.image_url || "/placeholder.svg",
+      farmer: "Producteur",
+      shopId: p.shop_id,
+    });
+  };
 
   if (loading) {
     return (
@@ -162,244 +220,269 @@ const ProductDetail = () => {
     );
   }
 
-  const isMockProduct = product.id.startsWith("m");
-  const handleAddToCart = () => {
-    if (isMockProduct) return;
-
-    for (let i = 0; i < quantity; i++) {
-      addItem({
-        id: product.id,
-        name: product.name,
-        price: formatPrice(product.price),
-        priceNum: product.price,
-        unit: product.unit,
-        image: images[0] || "/placeholder.svg",
-        farmer: sellerProfile?.full_name || shop?.name || "Vendeur",
-        shopId: product.shop_id,
-      });
-    }
-  };
-
-  const handleAddRelated = (p: Product, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (p.id.startsWith("m")) return;
-
-    addItem({
-      id: p.id,
-      name: p.name,
-      price: formatPrice(p.price),
-      priceNum: p.price,
-      unit: p.unit,
-      image: p.image_url || "/placeholder.svg",
-      farmer: "Producteur",
-      shopId: p.shop_id,
-    });
-  };
-
   const sellerName = sellerProfile?.full_name || shop?.name || "Producteur";
   const sellerCity = sellerProfile?.city || shop?.city || "Sénégal";
   const totalPrice = product.price * quantity;
+  const visibleRelated = allRelated.slice(0, visibleCount);
 
   return (
-    <div className="min-h-screen bg-background pb-0 md:pb-0">
+    <div className="min-h-screen bg-background">
       <div className="hidden md:block"><Navbar /></div>
 
       <main className="pt-0 md:pt-24">
-        {/* ═══════ MOBILE VIEW ═══════ */}
+        {/* ═══════ MOBILE ═══════ */}
         <div className="md:hidden pb-24">
-          {/* Fixed header with X and share */}
+          {/* Floating header */}
           <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 safe-area-top">
-            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm flex items-center justify-center shadow-sm">
-              <span className="material-symbols-outlined text-on-surface">close</span>
+            <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center shadow-lg border border-border/10">
+              <span className="material-symbols-outlined text-foreground text-xl">arrow_back</span>
             </button>
-            <button className="w-10 h-10 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm flex items-center justify-center shadow-sm">
-              <span className="material-symbols-outlined text-on-surface">ios_share</span>
+            <button className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-md flex items-center justify-center shadow-lg border border-border/10">
+              <span className="material-symbols-outlined text-foreground text-xl">ios_share</span>
             </button>
           </div>
 
-          {/* Product Image */}
+          {/* Image carousel — full-bleed, swipeable */}
           <div
-            className="relative w-full aspect-[4/3] bg-surface-container-lowest overflow-hidden"
+            className="relative w-full aspect-square bg-surface-container overflow-hidden"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
             <AnimatePresence mode="wait">
-              <motion.div
+              <motion.img
                 key={currentImage}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="absolute inset-0 flex items-center justify-center"
-              >
-                {images[currentImage] ? (
-                  <img src={images[currentImage]} alt={product.name} className="w-full h-full object-contain" />
-                ) : (
-                  <span className="material-symbols-outlined text-8xl text-on-surface-variant/20">eco</span>
-                )}
-              </motion.div>
+                src={images[currentImage] || "/placeholder.svg"}
+                alt={product.name}
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
             </AnimatePresence>
 
-            {/* Dots */}
+            {/* Image counter pill */}
             {images.length > 1 && (
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-foreground/60 backdrop-blur-sm rounded-full px-3 py-1.5">
                 {images.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentImage(i)}
-                    className={`rounded-full transition-all ${i === currentImage ? "w-5 h-1.5 bg-primary" : "w-1.5 h-1.5 bg-on-surface-variant/30"}`}
+                    className={`rounded-full transition-all duration-300 ${i === currentImage ? "w-6 h-2 bg-background" : "w-2 h-2 bg-background/40"}`}
                   />
                 ))}
               </div>
             )}
           </div>
 
-          {/* Divider */}
-          <div className="h-px bg-border/40" />
+          {/* Product info card */}
+          <div className="px-5 pt-5 pb-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                {product.categories?.name && (
+                  <span className="text-xs font-bold text-primary uppercase tracking-wider">{product.categories.name}</span>
+                )}
+                <h1 className="text-2xl font-headline font-extrabold tracking-tight mt-1 leading-tight">{product.name}</h1>
+              </div>
+              <div className="text-right shrink-0">
+                <div className="text-2xl font-headline font-extrabold text-foreground">{formatPrice(product.price)}</div>
+                <div className="text-xs text-on-surface-variant">{product.unit}</div>
+              </div>
+            </div>
 
-          {/* Product Info */}
-          <div className="px-5 pt-4 pb-3">
-            {/* Stock badge */}
-            {product.stock > 0 && (
-              <span className="inline-block text-xs font-bold text-primary bg-primary/10 px-3 py-1 rounded-full mb-2">
-                {product.stock > 10 ? "En stock" : `Plus que ${product.stock}`}
+            {/* Stock + delivery info */}
+            <div className="flex items-center gap-3 mt-3">
+              {product.stock > 0 ? (
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary bg-primary/8 px-2.5 py-1 rounded-full">
+                  <span className="material-symbols-outlined text-sm">check_circle</span>
+                  {product.stock > 10 ? "En stock" : `Plus que ${product.stock}`}
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-destructive bg-destructive/10 px-2.5 py-1 rounded-full">
+                  Rupture de stock
+                </span>
+              )}
+              <span className="inline-flex items-center gap-1 text-xs text-on-surface-variant">
+                <span className="material-symbols-outlined text-sm">local_shipping</span>
+                Livraison disponible
               </span>
-            )}
-
-            <h1 className="text-xl font-headline font-extrabold tracking-tight leading-tight">
-              {product.name}
-            </h1>
-            <p className="text-xs text-on-surface-variant mt-0.5">{product.unit}</p>
-            {isMockProduct && (
-              <p className="text-xs text-on-surface-variant mt-2">
-                Fiche de démonstration pour valider le design avant l’import du vrai catalogue.
-              </p>
-            )}
-
-            <div className="mt-2">
-              <span className="text-xl font-headline font-extrabold">{formatPrice(product.price)}</span>
             </div>
           </div>
 
-          <div className="h-px bg-border/40 mx-5" />
-
-          {/* Quantity Selector */}
-          <div className="px-5 py-4">
-            <div className="inline-flex items-center gap-0 bg-surface-container rounded-full">
+          {/* Quantity selector — pill style */}
+          <div className="px-5 py-3">
+            <div className="flex items-center justify-between bg-surface-container rounded-2xl p-1">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-12 h-12 flex items-center justify-center rounded-full hover:bg-surface-container-lowest transition-colors"
+                className="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-background transition-colors"
               >
-                <span className="material-symbols-outlined text-lg">remove</span>
+                <span className="material-symbols-outlined text-lg text-on-surface-variant">remove</span>
               </button>
-              <span className="w-10 text-center font-headline font-extrabold text-base">{quantity}</span>
+              <span className="font-headline font-extrabold text-lg px-4">{quantity}</span>
               <button
                 onClick={() => setQuantity(quantity + 1)}
-                className="w-12 h-12 flex items-center justify-center rounded-full hover:bg-surface-container-lowest transition-colors"
+                className="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-background transition-colors"
               >
-                <span className="material-symbols-outlined text-lg">add</span>
+                <span className="material-symbols-outlined text-lg text-on-surface-variant">add</span>
               </button>
-            </div>
-          </div>
-
-          {/* Seller info */}
-          <div className="px-5 py-3">
-            <div className="flex items-center gap-3 bg-surface-container-lowest rounded-2xl p-3 border border-border/20">
-              <div className="w-10 h-10 rounded-full bg-primary-container/20 flex items-center justify-center overflow-hidden shrink-0">
-                {sellerProfile?.avatar_url ? (
-                  <img src={sellerProfile.avatar_url} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="material-symbols-outlined text-primary text-sm">person</span>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-headline font-extrabold text-sm truncate">{sellerName}</p>
-                <p className="text-[10px] text-on-surface-variant">{sellerCity}</p>
-              </div>
-              {(shop?.phone || sellerProfile?.phone) && (
-                <a href={`tel:${shop?.phone || sellerProfile?.phone}`} className="w-9 h-9 rounded-full bg-primary-container flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-on-primary-container text-sm">call</span>
-                </a>
-              )}
             </div>
           </div>
 
           {/* Description */}
           {product.description && (
             <div className="px-5 py-3">
-              <h3 className="font-headline font-extrabold text-sm mb-1">Description</h3>
-              <p className="text-sm text-on-surface-variant leading-relaxed">
-                {product.description}
-              </p>
+              <h3 className="font-headline font-bold text-sm mb-1.5">À propos</h3>
+              <p className="text-sm text-on-surface-variant leading-relaxed">{product.description}</p>
             </div>
           )}
 
-          <div className="h-2 bg-surface-container my-2" />
+          {/* Separator */}
+          <div className="h-2 bg-surface-container my-1" />
 
-          {/* Similar Items */}
-          {related.length > 0 && (
-            <div className="px-5 py-4">
-              <h3 className="font-headline font-extrabold text-base mb-3">Produits similaires</h3>
-              <div className="grid grid-cols-3 gap-3">
-                {related.map((p, i) => (
+          {/* Seller */}
+          <div className="px-5 py-4">
+            <h3 className="font-headline font-bold text-sm mb-3">Vendeur</h3>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
+                {sellerProfile?.avatar_url ? (
+                  <img src={sellerProfile.avatar_url} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <span className="material-symbols-outlined text-primary">storefront</span>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-headline font-bold text-sm truncate">{sellerName}</p>
+                <p className="text-xs text-on-surface-variant flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">location_on</span>
+                  {sellerCity}
+                </p>
+              </div>
+              {(shop?.phone || sellerProfile?.phone) && (
+                <a href={`tel:${shop?.phone || sellerProfile?.phone}`} className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary text-lg">call</span>
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div className="h-2 bg-surface-container" />
+
+          {/* Related products — grid with infinite scroll */}
+          {allRelated.length > 0 && (
+            <div className="px-5 py-5">
+              <h3 className="font-headline font-extrabold text-lg mb-4">Vous aimerez aussi</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {visibleRelated.map((p, i) => (
                   <ProductCard key={p.id} product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
                 ))}
               </div>
+              {visibleCount < allRelated.length && (
+                <div ref={sentinelRef} className="flex justify-center py-8">
+                  <span className="material-symbols-outlined text-2xl text-on-surface-variant/40 animate-spin">progress_activity</span>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Sticky bottom Add to Cart bar */}
-          <div className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border/30 px-5 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+          {/* Sticky bottom bar */}
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border/20 px-5 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
             <button
               onClick={handleAddToCart}
               disabled={product.stock <= 0 || isMockProduct}
-              className="w-full bg-foreground text-background py-4 rounded-xl font-headline font-extrabold text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-50"
+              className="w-full bg-foreground text-background py-4 rounded-2xl font-headline font-bold text-[15px] flex items-center justify-center gap-2 active:scale-[0.97] transition-transform disabled:opacity-40"
             >
-              {isMockProduct ? "Produit démo · bientôt disponible" : `Ajouter ${quantity > 1 ? `${quantity}` : "1"} au panier · ${formatPrice(totalPrice)}`}
+              {isMockProduct
+                ? "Produit démo · bientôt disponible"
+                : (
+                  <>
+                    <span className="material-symbols-outlined text-lg">shopping_bag</span>
+                    Ajouter {quantity > 1 ? `(${quantity})` : ""} · {formatPrice(totalPrice)}
+                  </>
+                )}
             </button>
           </div>
         </div>
 
-        {/* ═══════ DESKTOP VIEW ═══════ */}
+        {/* ═══════ DESKTOP ═══════ */}
         <div className="hidden md:block">
           {/* Breadcrumb */}
-          <div className="px-6 md:px-12 max-w-[1440px] mx-auto py-6">
+          <div className="px-6 md:px-12 max-w-[1440px] mx-auto py-4">
             <nav className="flex items-center gap-2 text-sm text-on-surface-variant font-body">
+              <Link to="/" className="hover:text-primary transition-colors">Accueil</Link>
+              <span className="material-symbols-outlined text-xs">chevron_right</span>
               <Link to="/marche" className="hover:text-primary transition-colors">Marché</Link>
-              <span className="material-symbols-outlined text-base">chevron_right</span>
-              <span className="text-foreground font-medium">{product.name}</span>
+              {product.categories?.name && (
+                <>
+                  <span className="material-symbols-outlined text-xs">chevron_right</span>
+                  <Link to={`/marche?cat=${product.category_id}`} className="hover:text-primary transition-colors">{product.categories.name}</Link>
+                </>
+              )}
+              <span className="material-symbols-outlined text-xs">chevron_right</span>
+              <span className="text-foreground font-medium truncate max-w-[200px]">{product.name}</span>
             </nav>
           </div>
 
-          {/* Product Hero */}
-          <section className="px-6 md:px-12 max-w-[1440px] mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {/* Image gallery */}
+          {/* Product section */}
+          <section className="px-6 md:px-12 max-w-[1440px] mx-auto pb-12">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 items-start">
+
+              {/* Left — Images */}
               <div>
+                {/* Main image */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6 }}
-                  className="relative rounded-2xl overflow-hidden aspect-square bg-surface-container-lowest mb-4"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="relative rounded-2xl overflow-hidden bg-surface-container aspect-[4/3] mb-3"
                 >
-                  {images[currentImage] ? (
-                    <img src={images[currentImage]} alt={product.name} className="w-full h-full object-contain p-8" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <span className="material-symbols-outlined text-8xl text-on-surface-variant/30">eco</span>
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={currentImage}
+                      src={images[currentImage] || "/placeholder.svg"}
+                      alt={product.name}
+                      initial={{ opacity: 0, scale: 1.03 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </AnimatePresence>
+
+                  {/* Nav arrows on image */}
+                  {images.length > 1 && (
+                    <>
+                      <button
+                        onClick={() => setCurrentImage((c) => Math.max(0, c - 1))}
+                        disabled={currentImage === 0}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-lg border border-border/10 disabled:opacity-0 transition-opacity hover:bg-background"
+                      >
+                        <span className="material-symbols-outlined text-lg">chevron_left</span>
+                      </button>
+                      <button
+                        onClick={() => setCurrentImage((c) => Math.min(images.length - 1, c + 1))}
+                        disabled={currentImage === images.length - 1}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-lg border border-border/10 disabled:opacity-0 transition-opacity hover:bg-background"
+                      >
+                        <span className="material-symbols-outlined text-lg">chevron_right</span>
+                      </button>
+                    </>
+                  )}
+
+                  {/* Counter */}
+                  {images.length > 1 && (
+                    <div className="absolute bottom-3 right-3 bg-foreground/60 text-background text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">
+                      {currentImage + 1} / {images.length}
                     </div>
                   )}
                 </motion.div>
 
-                {/* Thumbnails */}
+                {/* Thumbnail strip */}
                 {images.length > 1 && (
-                  <div className="flex gap-3">
+                  <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                     {images.map((img, i) => (
                       <button
                         key={i}
                         onClick={() => setCurrentImage(i)}
-                        className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${i === currentImage ? "border-primary ring-2 ring-primary/20" : "border-border/20 opacity-60 hover:opacity-100"}`}
+                        className={`shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${i === currentImage ? "border-primary ring-2 ring-primary/20 scale-[1.02]" : "border-transparent opacity-60 hover:opacity-90"}`}
                       >
                         <img src={img} alt="" className="w-full h-full object-cover" />
                       </button>
@@ -408,77 +491,106 @@ const ProductDetail = () => {
                 )}
               </div>
 
+              {/* Right — Sticky info card */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="flex flex-col"
+                transition={{ duration: 0.4, delay: 0.15 }}
+                className="lg:sticky lg:top-28"
               >
-                {product.categories?.name && (
-                  <span className="px-4 py-1.5 rounded-full border border-border text-xs font-headline font-bold uppercase tracking-wider text-on-surface-variant w-fit mb-4">
-                    {product.categories.name}
-                  </span>
-                )}
+                <div className="bg-background border border-border/30 rounded-2xl p-6 shadow-sm">
+                  {/* Category */}
+                  {product.categories?.name && (
+                    <span className="text-xs font-bold text-primary uppercase tracking-widest">{product.categories.name}</span>
+                  )}
 
-                <h1 className="text-4xl md:text-5xl font-headline font-extrabold tracking-tighter mb-4">{product.name}</h1>
+                  <h1 className="text-3xl font-headline font-extrabold tracking-tight mt-2 mb-1">{product.name}</h1>
+                  <p className="text-sm text-on-surface-variant mb-4">{product.unit}</p>
 
-                {isMockProduct && (
-                  <p className="text-sm text-on-surface-variant font-body leading-relaxed mb-4">
-                    Fiche de démonstration pour valider le design avant l’import du vrai catalogue.
-                  </p>
-                )}
+                  {/* Price */}
+                  <div className="text-3xl font-headline font-extrabold mb-5">{formatPrice(product.price)}</div>
 
-                {product.description && (
-                  <p className="text-lg text-on-surface-variant font-body leading-relaxed mb-6">{product.description}</p>
-                )}
-
-                <div className="flex items-center gap-6 mb-8">
-                  <div>
-                    <div className="text-sm text-on-surface-variant mb-1">{product.unit}</div>
-                    <div className="text-4xl font-headline font-extrabold">{formatPrice(product.price)}</div>
+                  {/* Stock badge */}
+                  <div className="flex items-center gap-3 mb-5">
+                    {product.stock > 0 ? (
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/8 px-3 py-1.5 rounded-full">
+                        <span className="material-symbols-outlined text-sm">check_circle</span>
+                        {product.stock > 10 ? "En stock" : `Plus que ${product.stock} restants`}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-destructive bg-destructive/10 px-3 py-1.5 rounded-full">
+                        Rupture de stock
+                      </span>
+                    )}
+                    <span className="inline-flex items-center gap-1 text-xs text-on-surface-variant">
+                      <span className="material-symbols-outlined text-sm">local_shipping</span>
+                      Livraison
+                    </span>
                   </div>
-                </div>
 
-                {/* Quantity + Add */}
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="inline-flex items-center gap-0 bg-surface-container rounded-full">
-                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-12 h-12 flex items-center justify-center rounded-full hover:bg-surface-container-lowest transition-colors">
-                      <span className="material-symbols-outlined text-lg">remove</span>
-                    </button>
-                    <span className="w-10 text-center font-headline font-extrabold">{quantity}</span>
-                    <button onClick={() => setQuantity(quantity + 1)} className="w-12 h-12 flex items-center justify-center rounded-full hover:bg-surface-container-lowest transition-colors">
-                      <span className="material-symbols-outlined text-lg">add</span>
-                    </button>
+                  {/* Quantity */}
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex items-center bg-surface-container rounded-xl">
+                      <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-11 h-11 flex items-center justify-center rounded-l-xl hover:bg-background transition-colors">
+                        <span className="material-symbols-outlined text-lg">remove</span>
+                      </button>
+                      <span className="w-12 text-center font-headline font-extrabold">{quantity}</span>
+                      <button onClick={() => setQuantity(quantity + 1)} className="w-11 h-11 flex items-center justify-center rounded-r-xl hover:bg-background transition-colors">
+                        <span className="material-symbols-outlined text-lg">add</span>
+                      </button>
+                    </div>
+                    <div className="text-sm text-on-surface-variant">
+                      Total: <span className="font-bold text-foreground">{formatPrice(totalPrice)}</span>
+                    </div>
                   </div>
+
+                  {/* Add to cart */}
                   <button
                     onClick={handleAddToCart}
-                     disabled={product.stock <= 0 || isMockProduct}
-                    className="flex-1 bg-foreground text-background px-8 py-4 rounded-xl font-headline font-extrabold text-base flex items-center justify-center gap-3 hover:scale-[0.98] transition-transform disabled:opacity-50"
+                    disabled={product.stock <= 0 || isMockProduct}
+                    className="w-full bg-foreground text-background py-4 rounded-2xl font-headline font-bold text-[15px] flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-40"
                   >
-                     {isMockProduct ? "Produit démo · bientôt disponible" : `Ajouter au panier · ${formatPrice(totalPrice)}`}
+                    {isMockProduct ? "Produit démo · bientôt disponible" : (
+                      <>
+                        <span className="material-symbols-outlined text-lg">shopping_bag</span>
+                        Ajouter au panier
+                      </>
+                    )}
                   </button>
-                </div>
 
-                {/* Seller */}
-                <div className="bg-surface-container-lowest rounded-2xl p-5 border border-border/20">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-primary-container/20 flex items-center justify-center overflow-hidden shrink-0">
+                  {/* Divider */}
+                  <div className="h-px bg-border/30 my-5" />
+
+                  {/* Description */}
+                  {product.description && (
+                    <div className="mb-5">
+                      <h3 className="font-headline font-bold text-sm mb-2">À propos du produit</h3>
+                      <p className="text-sm text-on-surface-variant leading-relaxed">{product.description}</p>
+                    </div>
+                  )}
+
+                  {/* Seller */}
+                  <div className="flex items-center gap-3 bg-surface-container/50 rounded-xl p-3">
+                    <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
                       {sellerProfile?.avatar_url ? (
                         <img src={sellerProfile.avatar_url} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="material-symbols-outlined text-primary text-xl">person</span>
+                        <span className="material-symbols-outlined text-primary">storefront</span>
                       )}
                     </div>
-                    <div className="flex-1">
-                      <p className="font-headline font-extrabold">{sellerName}</p>
-                      <p className="text-sm text-on-surface-variant">{sellerCity}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-headline font-bold text-sm truncate">{sellerName}</p>
+                      <p className="text-xs text-on-surface-variant flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">location_on</span>
+                        {sellerCity}
+                      </p>
                     </div>
                     {(shop?.phone || sellerProfile?.phone) && (
                       <a
                         href={`tel:${shop?.phone || sellerProfile?.phone}`}
-                        className="inline-flex items-center gap-2 bg-primary-container text-on-primary-container px-5 py-2.5 rounded-full font-headline font-bold text-sm hover:scale-95 transition-transform"
+                        className="inline-flex items-center gap-1.5 bg-primary/10 text-primary px-4 py-2 rounded-xl font-bold text-xs hover:bg-primary/15 transition-colors"
                       >
-                        <span className="material-symbols-outlined text-base">call</span>
+                        <span className="material-symbols-outlined text-sm">call</span>
                         Appeler
                       </a>
                     )}
@@ -488,15 +600,20 @@ const ProductDetail = () => {
             </div>
           </section>
 
-          {/* Related Products */}
-          {related.length > 0 && (
-            <section className="py-16 px-6 md:px-12 max-w-[1440px] mx-auto">
-              <h2 className="text-3xl font-headline font-extrabold tracking-tighter mb-8">Produits similaires</h2>
+          {/* Related products — with infinite scroll */}
+          {allRelated.length > 0 && (
+            <section className="py-12 px-6 md:px-12 max-w-[1440px] mx-auto border-t border-border/20">
+              <h2 className="text-2xl font-headline font-extrabold tracking-tight mb-6">Vous aimerez aussi</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {related.map(p => (
-                  <ProductCard key={p.id} product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} />
+                {visibleRelated.map((p, i) => (
+                  <ProductCard key={p.id} product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
                 ))}
               </div>
+              {visibleCount < allRelated.length && (
+                <div ref={sentinelRef} className="flex justify-center py-10">
+                  <span className="material-symbols-outlined text-3xl text-on-surface-variant/30 animate-spin">progress_activity</span>
+                </div>
+              )}
             </section>
           )}
         </div>
