@@ -130,7 +130,7 @@ const PromoCarousel = () => {
               <img
                 src={banner.image}
                 alt=""
-                className={`${banner.id === 6 ? "w-44 md:w-52 h-44 md:h-52" : "w-36 md:w-44 h-36 md:h-44"} object-contain -mr-2 -mb-4 -mt-2 relative z-10 drop-shadow-lg`}
+                className={`${banner.id === 6 ? "w-52 md:w-64 h-52 md:h-64 -mr-4 -mb-6" : "w-36 md:w-44 h-36 md:h-44 -mr-2 -mb-4"} object-contain -mt-2 relative z-10 drop-shadow-lg`}
                 loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
                 width={512}
