@@ -57,8 +57,8 @@ const ValuesSection = () => {
         >
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
             <img
-              src={farmTeam}
-              alt="Notre équipe sur le terrain"
+              src={seedlingGrow1}
+              alt="Croissance des plants"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
               width={400}
