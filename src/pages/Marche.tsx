@@ -209,7 +209,7 @@ const Marche = () => {
         <section className="px-5 md:px-12 mt-4 md:mb-6 max-w-[1440px] mx-auto">
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             <button
-              onClick={() => setSelectedCategory(null)}
+              onClick={() => handleCategoryChange(null)}
               className={`shrink-0 px-4 py-2 rounded-xl text-xs font-headline font-bold transition-colors ${
                 !selectedCategory
                   ? "bg-foreground text-background"
@@ -221,7 +221,7 @@ const Marche = () => {
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.id === selectedCategory ? null : cat.id)}
+                onClick={() => handleCategoryChange(cat.id === selectedCategory ? null : cat.id)}
                 className={`shrink-0 px-4 py-2 rounded-xl text-xs font-headline font-bold transition-colors flex items-center gap-1.5 ${
                   selectedCategory === cat.id
                     ? "bg-foreground text-background"
