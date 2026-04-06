@@ -6,15 +6,15 @@ const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 bg-[#1a3a00]">
         <img
           src={heroLandscape}
           alt="Paysage agricole sénégalais"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
           width={1920}
           height={1080}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
       </div>
 
       {/* Content */}
