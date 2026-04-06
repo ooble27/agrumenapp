@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import { toast } from "sonner";
 
 import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
@@ -97,7 +98,7 @@ const Marche = () => {
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (product.id.startsWith("m")) return; // mock product, don't add
+    if (product.id.startsWith("m")) return;
     addItem({
       id: product.id,
       name: product.name,
@@ -108,6 +109,7 @@ const Marche = () => {
       farmer: product.shops?.name || "Producteur",
       shopId: product.shop_id,
     });
+    toast.success(`${product.name} ajouté au panier`, { icon: "🧺" });
   };
 
   const formatPrice = (n: number) => n.toLocaleString("fr-FR");
