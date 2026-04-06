@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 
 const steps = [
-  { icon: "search", num: "01", title: "Explorez", description: "Parcourez les produits frais de nos artisans locaux." },
-  { icon: "add_shopping_cart", num: "02", title: "Composez", description: "Ajoutez vos produits préférés en un clic." },
-  { icon: "payments", num: "03", title: "Payez", description: "Wave ou Orange Money. Paiement instantané." },
-  { icon: "local_shipping", num: "04", title: "Recevez", description: "Livré chez vous en moins de 24h." },
+  { icon: "search", title: "Explorez", desc: "Parcourez nos produits frais cueillis le jour même." },
+  { icon: "add_shopping_cart", title: "Commandez", desc: "Ajoutez à votre panier et choisissez la livraison." },
+  { icon: "payments", title: "Payez", desc: "Wave, Orange Money. Paiement instantané et sécurisé." },
+  { icon: "local_shipping", title: "Recevez", desc: "Livré chez vous en moins de 24h à Dakar." },
 ];
 
 const HowItWorks = () => {
@@ -14,36 +14,39 @@ const HowItWorks = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="text-center mb-16"
+        className="mb-16"
       >
-        <span className="text-primary font-headline font-bold text-xs uppercase tracking-[0.2em]">Simple & Rapide</span>
-        <h2 className="text-3xl md:text-5xl font-headline font-extrabold tracking-tight mt-3">
-          Comment ça marche ?
+        <span className="inline-block w-12 h-0.5 bg-primary mb-6" />
+        <h2 className="text-3xl md:text-5xl font-headline font-extrabold tracking-tight">
+          Quatre étapes.
+          <br />
+          <span className="text-on-surface-variant">Zéro complication.</span>
         </h2>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border/30 rounded-3xl overflow-hidden">
         {steps.map((step, i) => (
           <motion.div
-            key={step.num}
-            initial={{ opacity: 0, y: 30 }}
+            key={step.title}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1, duration: 0.5 }}
-            className="relative group"
+            className="bg-background p-8 md:p-12 group hover:bg-surface-container-lowest transition-colors"
           >
-            {/* Connector line */}
-            {i < steps.length - 1 && (
-              <div className="hidden md:block absolute top-8 left-[calc(50%+32px)] w-[calc(100%-64px)] h-px bg-border/30" />
-            )}
-
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-5 rounded-2xl bg-surface-container-lowest border border-border/30 flex items-center justify-center group-hover:border-primary/40 group-hover:shadow-lg transition-all">
-                <span className="material-symbols-outlined text-primary text-2xl">{step.icon}</span>
+            <div className="flex items-start gap-5">
+              <div className="relative">
+                <span className="text-[4rem] font-headline font-extrabold text-border/20 leading-none select-none">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary-container transition-colors">
+                  <span className="material-symbols-outlined text-primary text-xl group-hover:text-primary-container-foreground transition-colors">{step.icon}</span>
+                </div>
               </div>
-              <span className="text-[10px] font-headline font-bold text-on-surface-variant/50 uppercase tracking-widest">{step.num}</span>
-              <h3 className="text-lg font-headline font-extrabold mt-1 mb-2">{step.title}</h3>
-              <p className="text-sm text-on-surface-variant font-body leading-relaxed">{step.description}</p>
+              <div className="pt-3">
+                <h3 className="text-xl font-headline font-extrabold mb-2">{step.title}</h3>
+                <p className="text-sm text-on-surface-variant font-body leading-relaxed max-w-[240px]">{step.desc}</p>
+              </div>
             </div>
           </motion.div>
         ))}
