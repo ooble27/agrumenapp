@@ -25,8 +25,8 @@ const Navbar = () => {
               Mes Produits
             </Link>
           )}
-          {user && role === "buyer" && (
-            <Link to="/mon-compte" className="font-headline font-extrabold uppercase tracking-tight text-sm text-on-surface-variant hover:text-foreground hover:scale-95 transition-transform duration-200">
+          {user && (
+            <Link to={role === "seller" ? "/dashboard" : "/mon-compte"} className="font-headline font-extrabold uppercase tracking-tight text-sm text-on-surface-variant hover:text-foreground hover:scale-95 transition-transform duration-200">
               Mon Compte
             </Link>
           )}
