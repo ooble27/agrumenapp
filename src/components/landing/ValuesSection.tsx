@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import farmPeppers from "@/assets/farm-peppers.jpg";
-import seedlingGrow1 from "@/assets/seedling-grow-1.jpg";
-import farmNursery1 from "@/assets/farm-nursery-1.jpg";
-import farmNursery3 from "@/assets/farm-nursery-3.jpg";
-import farmFieldWide from "@/assets/farm-field-wide.jpg";
-import seedlingClose from "@/assets/seedling-close.jpg";
+import illustFarmerField from "@/assets/illust-farmer-field.png";
+import illustSeedlings from "@/assets/illust-seedlings.png";
+import illustBio from "@/assets/illust-bio.png";
+import illustSelection from "@/assets/illust-selection.png";
+import illustTeamFarming from "@/assets/illust-team-farming.png";
+import illustFarmerWoman from "@/assets/illust-farmer-woman.png";
 
 const ValuesSection = () => {
   return (
@@ -24,9 +24,9 @@ const ValuesSection = () => {
         </h2>
       </motion.div>
 
-      {/* Masonry-like image grid */}
+      {/* Masonry-like illustration grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        {/* Tall left — only tall on md+ */}
+        {/* Tall left */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -34,17 +34,17 @@ const ValuesSection = () => {
           transition={{ duration: 0.7 }}
           className="sm:col-span-1 md:row-span-2"
         >
-          <div className="relative w-full aspect-[4/3] sm:aspect-[3/4] md:aspect-auto md:h-full md:min-h-[450px] rounded-2xl overflow-hidden group">
+          <div className="relative w-full aspect-[4/3] sm:aspect-[3/4] md:aspect-auto md:h-full md:min-h-[450px] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-4">
             <img
-              src={farmPeppers}
-              alt="Nos champs de piments"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              src={illustFarmerField}
+              alt="Nos producteurs"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-lg"
               loading="lazy"
-              width={600}
-              height={900}
+              width={896}
+              height={1200}
             />
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-xs font-headline font-bold text-white/80 tracking-wider uppercase">Nos Champs</span>
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/40 to-transparent">
+              <span className="text-xs font-headline font-bold text-white/90 tracking-wider uppercase">Nos Producteurs</span>
             </div>
           </div>
         </motion.div>
@@ -55,17 +55,17 @@ const ValuesSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-4">
             <img
-              src={seedlingGrow1}
+              src={illustSeedlings}
               alt="Croissance des plants"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
               loading="lazy"
               width={400}
               height={300}
             />
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Notre Équipe</span>
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/40 to-transparent">
+              <span className="text-[10px] font-headline font-bold text-white/90 tracking-wider uppercase">Pépinière</span>
             </div>
           </div>
         </motion.div>
@@ -76,17 +76,17 @@ const ValuesSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.15 }}
         >
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-4">
             <img
-              src={farmNursery1}
-              alt="Pépinière"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              src={illustBio}
+              alt="Produits bio"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
               loading="lazy"
               width={400}
               height={300}
             />
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Pépinière</span>
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/40 to-transparent">
+              <span className="text-[10px] font-headline font-bold text-white/90 tracking-wider uppercase">Bio & Naturel</span>
             </div>
           </div>
         </motion.div>
@@ -97,17 +97,17 @@ const ValuesSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-4">
             <img
-              src={farmNursery3}
-              alt="Culture en croissance"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              src={illustSelection}
+              alt="Sélection des produits"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
               loading="lazy"
               width={400}
               height={300}
             />
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Nos Cultures</span>
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/40 to-transparent">
+              <span className="text-[10px] font-headline font-bold text-white/90 tracking-wider uppercase">Sélection</span>
             </div>
           </div>
         </motion.div>
@@ -120,14 +120,14 @@ const ValuesSection = () => {
           transition={{ duration: 0.6, delay: 0.25 }}
           className="sm:col-span-2 md:col-span-2"
         >
-          <div className="relative aspect-[16/9] md:aspect-[2/1] rounded-2xl overflow-hidden group">
+          <div className="relative aspect-[16/9] md:aspect-[2/1] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-6">
             <img
-              src={farmFieldWide}
-              alt="Vue panoramique de nos champs"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              src={illustTeamFarming}
+              alt="Notre équipe"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
               loading="lazy"
-              width={800}
-              height={400}
+              width={1264}
+              height={848}
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="bg-white/90 backdrop-blur-sm rounded-full px-5 py-2.5 flex items-center gap-2 shadow-lg">
@@ -144,17 +144,17 @@ const ValuesSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
         >
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-4">
             <img
-              src={seedlingClose}
-              alt="Jeune pousse"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              src={illustFarmerWoman}
+              alt="Agricultrice"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
               loading="lazy"
-              width={400}
-              height={300}
+              width={896}
+              height={1200}
             />
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-              <span className="text-[10px] font-headline font-bold text-white/80 tracking-wider uppercase">Jeunes Pousses</span>
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/40 to-transparent">
+              <span className="text-[10px] font-headline font-bold text-white/90 tracking-wider uppercase">Nos Agricultrices</span>
             </div>
           </div>
         </motion.div>

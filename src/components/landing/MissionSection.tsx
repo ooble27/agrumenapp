@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import farmTeam from "@/assets/farm-team.jpg";
+import illustFarmerField from "@/assets/illust-farmer-field.png";
 
 const MissionSection = () => {
   return (
@@ -41,14 +41,14 @@ const MissionSection = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="lg:col-span-4 flex items-end"
         >
-          <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden">
+          <div className="relative w-full aspect-[4/5] rounded-2xl overflow-hidden bg-primary/5 flex items-center justify-center p-4">
             <img
-              src={farmTeam}
+              src={illustFarmerField}
               alt="Producteur dans son champ"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain drop-shadow-lg"
               loading="lazy"
-              width={800}
-              height={1000}
+              width={896}
+              height={1200}
             />
           </div>
         </motion.div>

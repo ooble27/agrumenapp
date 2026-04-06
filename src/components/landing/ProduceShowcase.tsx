@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import produceFlatlay from "@/assets/produce-flatlay.jpg";
-import farmerPortrait from "@/assets/farmer-portrait.jpg";
+import illustFarmerWoman from "@/assets/illust-farmer-woman.png";
+import illustProduceFlatlay from "@/assets/illust-produce-flatlay.png";
 
 const ProduceShowcase = () => {
   return (
     <section className="py-20 md:py-32 px-4 md:px-8 max-w-[1200px] mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-        {/* Images grid */}
+        {/* Illustrations grid */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -16,24 +16,24 @@ const ProduceShowcase = () => {
           className="relative"
         >
           <div className="grid grid-cols-5 gap-4">
-            <div className="col-span-3 rounded-3xl overflow-hidden aspect-[3/4]">
+            <div className="col-span-3 rounded-3xl overflow-hidden aspect-[3/4] bg-primary/5 flex items-center justify-center p-4">
               <img
-                src={farmerPortrait}
+                src={illustFarmerWoman}
                 alt="Agricultrice sénégalaise"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-contain hover:scale-105 transition-transform duration-700 drop-shadow-lg"
                 loading="lazy"
-                width={800}
-                height={1024}
+                width={896}
+                height={1200}
               />
             </div>
-            <div className="col-span-2 rounded-3xl overflow-hidden aspect-[2/3] mt-12">
+            <div className="col-span-2 rounded-3xl overflow-hidden aspect-[2/3] mt-12 bg-primary/5 flex items-center justify-center p-3">
               <img
-                src={produceFlatlay}
+                src={illustProduceFlatlay}
                 alt="Produits frais du marché"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-contain hover:scale-105 transition-transform duration-700 drop-shadow-md"
                 loading="lazy"
                 width={1200}
-                height={800}
+                height={896}
               />
             </div>
           </div>
