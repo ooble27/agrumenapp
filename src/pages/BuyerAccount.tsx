@@ -1,16 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import waveLogo from "@/assets/wave-logo.png";
 import orangeMoneyLogo from "@/assets/orange-money-logo.png";
 import { toast } from "sonner";
 import type { Order } from "@/types/database";
 
-type ActiveTab = "overview" | "orders" | "profile" | "addresses";
+type ActiveNav = "overview" | "orders" | "profile" | "addresses";
 
 const statusLabels: Record<string, { label: string; icon: string; color: string }> = {
   pending: { label: "En attente", icon: "schedule", color: "bg-tertiary/15 text-tertiary" },
@@ -24,9 +22,12 @@ const statusLabels: Record<string, { label: string; icon: string; color: string 
 const BuyerAccount = () => {
   const { user, profile, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<ActiveTab>("overview");
+  const [activeNav, setActiveNav] = useState<ActiveNav>("overview");
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   // Profile edit state
   const [fullName, setFullName] = useState("");
@@ -49,10 +50,13 @@ const BuyerAccount = () => {
 
   useEffect(() => {
     if (!user) return;
-    // Fetch profile with address
-    supabase.from("profiles").select("address").eq("user_id", user.id).single()
-      .then(({ data }) => { if (data) setAddress(data.address || ""); });
-    // Fetch orders
+    supabase.from("profiles").select("address, avatar_url").eq("user_id", user.id).single()
+      .then(({ data }) => {
+        if (data) {
+          setAddress(data.address || "");
+          if (data.avatar_url) setAvatarUrl(data.avatar_url);
+        }
+      });
     supabase.from("orders").select("*").eq("buyer_id", user.id).order("created_at", { ascending: false })
       .then(({ data }) => { if (data) setOrders(data); setLoadingOrders(false); });
   }, [user]);
@@ -64,10 +68,7 @@ const BuyerAccount = () => {
     setSaving(true);
     try {
       const { error } = await supabase.from("profiles").update({
-        full_name: fullName,
-        phone,
-        city,
-        address,
+        full_name: fullName, phone, city, address,
       }).eq("user_id", user.id);
       if (error) throw error;
       toast.success("Profil mis à jour !");
@@ -78,7 +79,17 @@ const BuyerAccount = () => {
     }
   };
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const handleAvatarUpload = async (file: File) => {
+    if (!user) return;
+    const ext = file.name.split(".").pop();
+    const path = `${user.id}/avatar.${ext}`;
+    const { error: uploadErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    if (uploadErr) { toast.error("Erreur upload photo"); return; }
+    const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
+    await supabase.from("profiles").update({ avatar_url: urlData.publicUrl }).eq("user_id", user.id);
+    setAvatarUrl(urlData.publicUrl);
+    toast.success("Photo de profil mise à jour !");
+  };
 
   if (authLoading || !user) return null;
 
@@ -87,372 +98,400 @@ const BuyerAccount = () => {
   const deliveredCount = orders.filter(o => o.status === "delivered").length;
   const totalSpent = orders.filter(o => o.status !== "cancelled").reduce((s, o) => s + o.total, 0);
 
-  const tabs: { id: ActiveTab; label: string; icon: string }[] = [
-    { id: "overview", label: "Aperçu", icon: "dashboard" },
-    { id: "orders", label: "Commandes", icon: "receipt_long" },
-    { id: "profile", label: "Profil", icon: "person" },
-    { id: "addresses", label: "Adresses", icon: "location_on" },
+  const navItems = [
+    { id: "overview" as ActiveNav, icon: "dashboard", label: "Aperçu" },
+    { id: "orders" as ActiveNav, icon: "receipt_long", label: "Commandes" },
+    { id: "profile" as ActiveNav, icon: "person", label: "Profil" },
+    { id: "addresses" as ActiveNav, icon: "location_on", label: "Adresses" },
   ];
 
-  return (
-    <div className="min-h-screen bg-background">
-      <Navbar />
-      <main className="pt-20 pb-24">
-        {/* Header */}
-        <div className="bg-card border-b border-border/30">
-          <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-8">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-primary-container flex items-center justify-center text-primary-container-foreground font-headline font-extrabold text-xl">
-                {(profile?.full_name || user.email || "U").charAt(0).toUpperCase()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h1 className="text-xl md:text-2xl font-headline font-extrabold tracking-tighter truncate">
-                  {profile?.full_name || "Mon Compte"}
-                </h1>
-                <p className="text-sm text-on-surface-variant truncate">{user.email}</p>
-              </div>
-              {/* Mobile hamburger for tabs */}
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors"
-              >
-                <span className="material-symbols-outlined text-xl">
-                  {mobileMenuOpen ? "close" : "menu"}
-                </span>
-              </button>
-            </div>
+  // ====== SECTION RENDERERS ======
 
-            {/* Desktop Tabs */}
-            <div className="hidden md:flex gap-1 mt-6 -mb-px">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-t-xl text-sm font-headline font-bold transition-all ${
-                    activeTab === tab.id
-                      ? "bg-background text-foreground border border-border/30 border-b-0"
-                      : "text-on-surface-variant hover:text-foreground hover:bg-surface-container"
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-lg">{tab.icon}</span>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+  const renderOverview = () => (
+    <>
+      <div className="mb-10 mt-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Bonjour, {profile?.full_name || "Acheteur"}</h1>
+        <p className="text-on-surface-variant mt-1 flex items-center gap-2">
+          <span className="material-symbols-outlined text-lg">person</span>
+          Compte Acheteur
+        </p>
+      </div>
+
+      {/* Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-10">
+        <div className="bg-primary-container p-5 md:p-7 rounded-3xl">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="material-symbols-outlined text-primary-container-foreground/60 text-xl">payments</span>
+            <span className="text-[9px] md:text-[10px] font-extrabold text-primary-container-foreground/60 uppercase tracking-[0.15em]">Dépensé</span>
           </div>
+          <div className="text-xl md:text-3xl font-black text-primary-container-foreground">{formatPrice(totalSpent)}</div>
+        </div>
+        <div className="bg-surface-container-lowest p-5 md:p-7 rounded-3xl">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="material-symbols-outlined text-on-surface-variant text-xl">receipt_long</span>
+            <span className="text-[9px] md:text-[10px] font-extrabold text-on-surface-variant uppercase tracking-[0.15em]">Commandes</span>
+          </div>
+          <div className="text-xl md:text-3xl font-black text-foreground">{orders.length}</div>
+        </div>
+        <div className="bg-surface-container-lowest p-5 md:p-7 rounded-3xl">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="material-symbols-outlined text-on-surface-variant text-xl">hourglass_top</span>
+            <span className="text-[9px] md:text-[10px] font-extrabold text-on-surface-variant uppercase tracking-[0.15em]">En cours</span>
+          </div>
+          <div className="text-xl md:text-3xl font-black text-foreground">{pendingCount}</div>
+        </div>
+        <div className="bg-surface-container-lowest p-5 md:p-7 rounded-3xl">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="material-symbols-outlined text-on-surface-variant text-xl">verified</span>
+            <span className="text-[9px] md:text-[10px] font-extrabold text-on-surface-variant uppercase tracking-[0.15em]">Livrées</span>
+          </div>
+          <div className="text-xl md:text-3xl font-black text-foreground">{deliveredCount}</div>
+        </div>
+      </div>
 
-          {/* Mobile tab menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden border-t border-border/30 bg-background/95 backdrop-blur-xl px-4 py-3 space-y-1">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => { setActiveTab(tab.id); setMobileMenuOpen(false); }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-headline font-bold transition-all ${
-                    activeTab === tab.id ? "bg-primary-container text-primary-container-foreground" : "text-on-surface-variant hover:bg-surface-container"
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-lg">{tab.icon}</span>
-                  {tab.label}
-                </button>
-              ))}
-              <button
-                onClick={() => { signOut(); navigate("/"); }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-destructive hover:bg-destructive/10 transition-all"
-              >
-                <span className="material-symbols-outlined text-lg">logout</span>
-                Déconnexion
-              </button>
+      {/* Recent Orders + Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+        <div className="lg:col-span-2 bg-surface-container-lowest p-6 md:p-8 rounded-3xl">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-extrabold">Commandes récentes</h3>
+            <button onClick={() => setActiveNav("orders")} className="text-xs font-bold text-primary hover:underline">
+              Voir tout →
+            </button>
+          </div>
+          {loadingOrders ? (
+            <div className="py-12 text-center">
+              <span className="material-symbols-outlined text-3xl text-on-surface-variant animate-spin">progress_activity</span>
+            </div>
+          ) : recentOrders.length === 0 ? (
+            <div className="py-12 text-center">
+              <span className="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-3">shopping_bag</span>
+              <p className="font-headline font-bold text-sm mb-1">Aucune commande</p>
+              <p className="text-on-surface-variant text-xs mb-4">Découvrez nos produits frais !</p>
+              <Link to="/marche" className="inline-block bg-primary-container text-primary-container-foreground px-5 py-2.5 rounded-full font-bold text-xs hover:scale-95 transition-transform">
+                Explorer le Marché
+              </Link>
+            </div>
+          ) : (
+            <div className="divide-y divide-border/15">
+              {recentOrders.map(order => {
+                const s = statusLabels[order.status] || statusLabels.pending;
+                return (
+                  <div key={order.id} className="py-4 flex items-center justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">
+                        #{order.id.slice(0, 8)}
+                      </div>
+                      <div className="font-headline font-extrabold text-base mt-0.5">{formatPrice(order.total)}</div>
+                      <div className="text-xs text-on-surface-variant">
+                        {new Date(order.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
+                      </div>
+                    </div>
+                    <span className={`shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold flex items-center gap-1 ${s.color}`}>
+                      <span className="material-symbols-outlined text-xs">{s.icon}</span>
+                      {s.label}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-8">
-          {/* ═══════ OVERVIEW ═══════ */}
-          {activeTab === "overview" && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-              {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                {[
-                  { label: "Commandes", value: orders.length, icon: "receipt_long", accent: false },
-                  { label: "En cours", value: pendingCount, icon: "hourglass_top", accent: true },
-                  { label: "Livrées", value: deliveredCount, icon: "verified", accent: false },
-                  { label: "Dépensé", value: formatPrice(totalSpent), icon: "payments", accent: false },
-                ].map((stat, i) => (
-                  <div key={i} className={`rounded-2xl p-4 md:p-5 ${stat.accent ? "bg-primary-container" : "bg-card"} border border-border/20`}>
-                    <span className={`material-symbols-outlined text-xl ${stat.accent ? "text-primary-container-foreground" : "text-on-surface-variant"}`}>
-                      {stat.icon}
+        <div className="space-y-4">
+          <h3 className="text-xl font-extrabold">Actions Rapides</h3>
+          <Link to="/marche" className="w-full flex items-center gap-4 bg-surface-container-lowest p-5 rounded-3xl hover:bg-surface-container-low transition-colors">
+            <div className="w-12 h-12 rounded-2xl bg-primary-container flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-primary-container-foreground">storefront</span>
+            </div>
+            <div className="text-left">
+              <div className="font-bold text-sm">Explorer le Marché</div>
+              <div className="text-xs text-on-surface-variant">Produits frais locaux</div>
+            </div>
+          </Link>
+          <button onClick={() => setActiveNav("profile")} className="w-full flex items-center gap-4 bg-surface-container-lowest p-5 rounded-3xl hover:bg-surface-container-low transition-colors">
+            <div className="w-12 h-12 rounded-2xl bg-surface-container-high flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-on-surface-variant">edit</span>
+            </div>
+            <div className="text-left">
+              <div className="font-bold text-sm">Modifier mon Profil</div>
+              <div className="text-xs text-on-surface-variant">Infos & préférences</div>
+            </div>
+          </button>
+          <button onClick={() => avatarInputRef.current?.click()} className="w-full flex items-center gap-4 bg-surface-container-lowest p-5 rounded-3xl hover:bg-surface-container-low transition-colors">
+            <div className="w-12 h-12 rounded-2xl bg-surface-container-high flex items-center justify-center shrink-0">
+              <span className="material-symbols-outlined text-on-surface-variant">photo_camera</span>
+            </div>
+            <div className="text-left">
+              <div className="font-bold text-sm">Photo de profil</div>
+              <div className="text-xs text-on-surface-variant">Personnalisez votre compte</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    </>
+  );
+
+  const renderOrders = () => (
+    <>
+      <h2 className="text-2xl font-extrabold tracking-tight mb-6 mt-8">Toutes mes commandes</h2>
+      {loadingOrders ? (
+        <div className="py-16 text-center">
+          <span className="material-symbols-outlined text-4xl text-on-surface-variant animate-spin">progress_activity</span>
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="text-center py-16 bg-surface-container-lowest rounded-3xl">
+          <span className="material-symbols-outlined text-5xl text-on-surface-variant/30 mb-3">receipt_long</span>
+          <p className="font-headline font-bold text-base mb-1">Aucune commande</p>
+          <p className="text-on-surface-variant text-sm mb-5">Vos commandes apparaîtront ici.</p>
+          <Link to="/marche" className="inline-block bg-primary-container text-primary-container-foreground px-6 py-3 rounded-full font-bold text-sm hover:scale-95 transition-transform">
+            Découvrir le Marché
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {orders.map((order, i) => {
+            const s = statusLabels[order.status] || statusLabels.pending;
+            return (
+              <motion.div
+                key={order.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04 }}
+                className="bg-surface-container-lowest rounded-3xl p-5"
+              >
+                <div className="flex flex-col sm:flex-row justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">
+                      Commande #{order.id.slice(0, 8)}
+                    </div>
+                    <div className="text-xl font-headline font-extrabold mt-1">{formatPrice(order.total)}</div>
+                    <div className="text-sm text-on-surface-variant mt-1">
+                      {new Date(order.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                    </div>
+                  </div>
+                  <span className={`self-start px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 ${s.color}`}>
+                    <span className="material-symbols-outlined text-sm">{s.icon}</span>
+                    {s.label}
+                  </span>
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-on-surface-variant">
+                  {order.payment_method && (
+                    <span className="flex items-center gap-1.5">
+                      <img
+                        src={order.payment_method === "wave" ? waveLogo : orangeMoneyLogo}
+                        alt=""
+                        className="w-4 h-4 rounded-full object-cover"
+                      />
+                      {order.payment_method === "wave" ? "Wave" : "Orange Money"}
                     </span>
-                    <div className={`text-2xl md:text-3xl font-headline font-extrabold mt-2 tracking-tighter ${stat.accent ? "text-primary-container-foreground" : ""}`}>
-                      {stat.value}
-                    </div>
-                    <div className={`text-xs font-bold mt-0.5 ${stat.accent ? "text-primary-container-foreground/70" : "text-on-surface-variant"}`}>
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Recent orders */}
-              <div className="bg-card rounded-2xl border border-border/20 overflow-hidden">
-                <div className="flex items-center justify-between px-5 py-4 border-b border-border/20">
-                  <h2 className="font-headline font-extrabold text-base">Commandes récentes</h2>
-                  <button onClick={() => setActiveTab("orders")} className="text-xs font-bold text-primary hover:underline">
-                    Voir tout →
-                  </button>
+                  )}
+                  {order.shipping_city && (
+                    <span className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-base">location_on</span>
+                      {order.shipping_city}
+                    </span>
+                  )}
                 </div>
-                {loadingOrders ? (
-                  <div className="py-12 text-center">
-                    <span className="material-symbols-outlined text-3xl text-on-surface-variant animate-spin">progress_activity</span>
-                  </div>
-                ) : recentOrders.length === 0 ? (
-                  <div className="py-12 text-center">
-                    <span className="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-3">shopping_bag</span>
-                    <p className="font-headline font-bold text-sm mb-1">Aucune commande</p>
-                    <p className="text-on-surface-variant text-xs mb-4">Découvrez nos produits frais !</p>
-                    <Link to="/marche" className="inline-block bg-primary-container text-primary-container-foreground px-5 py-2.5 rounded-full font-bold text-xs hover:scale-95 transition-transform">
-                      Explorer le Marché
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-border/15">
-                    {recentOrders.map(order => {
-                      const s = statusLabels[order.status] || statusLabels.pending;
-                      return (
-                        <div key={order.id} className="px-5 py-4 flex items-center justify-between gap-3">
-                          <div className="flex-1 min-w-0">
-                            <div className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">
-                              #{order.id.slice(0, 8)}
-                            </div>
-                            <div className="font-headline font-extrabold text-base mt-0.5">{formatPrice(order.total)}</div>
-                            <div className="text-xs text-on-surface-variant">
-                              {new Date(order.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}
-                              {order.payment_method && (
-                                <span className="ml-2 inline-flex items-center gap-1">
-                                  <img
-                                    src={order.payment_method === "wave" ? waveLogo : orangeMoneyLogo}
-                                    alt=""
-                                    className="w-3.5 h-3.5 rounded-full object-cover inline"
-                                  />
-                                  {order.payment_method === "wave" ? "Wave" : "Orange Money"}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <span className={`shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold flex items-center gap-1 ${s.color}`}>
-                            <span className="material-symbols-outlined text-xs">{s.icon}</span>
-                            {s.label}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+    </>
+  );
 
-              {/* Quick actions */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <Link to="/marche" className="bg-card rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-colors group">
-                  <span className="material-symbols-outlined text-2xl text-primary group-hover:scale-110 transition-transform inline-block">storefront</span>
-                  <div className="font-headline font-extrabold text-sm mt-2">Explorer le Marché</div>
-                  <div className="text-xs text-on-surface-variant mt-0.5">Produits frais locaux</div>
-                </Link>
-                <button onClick={() => setActiveTab("profile")} className="bg-card rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-colors text-left group">
-                  <span className="material-symbols-outlined text-2xl text-primary group-hover:scale-110 transition-transform inline-block">edit</span>
-                  <div className="font-headline font-extrabold text-sm mt-2">Modifier mon Profil</div>
-                  <div className="text-xs text-on-surface-variant mt-0.5">Infos & préférences</div>
-                </button>
-                <Link to="/devenir-producteur" className="bg-card rounded-2xl p-5 border border-border/20 hover:border-primary/30 transition-colors group col-span-2 md:col-span-1">
-                  <span className="material-symbols-outlined text-2xl text-primary group-hover:scale-110 transition-transform inline-block">eco</span>
-                  <div className="font-headline font-extrabold text-sm mt-2">Devenir Vendeur</div>
-                  <div className="text-xs text-on-surface-variant mt-0.5">Vendez vos produits</div>
-                </Link>
-              </div>
-            </motion.div>
-          )}
+  const renderProfile = () => (
+    <div className="max-w-lg mt-8">
+      <h2 className="text-2xl font-extrabold tracking-tight mb-6">Mon Profil</h2>
+      <div className="bg-surface-container-lowest rounded-3xl p-6 md:p-8 space-y-4">
+        <div>
+          <label className="text-xs font-bold text-on-surface-variant mb-1.5 block uppercase tracking-wider">Nom complet</label>
+          <input
+            value={fullName}
+            onChange={e => setFullName(e.target.value)}
+            className="w-full bg-surface-container-low rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary-container text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-bold text-on-surface-variant mb-1.5 block uppercase tracking-wider">Email</label>
+          <input
+            value={user.email || ""}
+            disabled
+            className="w-full bg-surface-container-low rounded-2xl p-4 text-sm opacity-60 cursor-not-allowed"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-bold text-on-surface-variant mb-1.5 block uppercase tracking-wider">Téléphone</label>
+          <input
+            value={phone}
+            onChange={e => setPhone(e.target.value)}
+            placeholder="77 000 00 00"
+            type="tel"
+            className="w-full bg-surface-container-low rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary-container text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-bold text-on-surface-variant mb-1.5 block uppercase tracking-wider">Ville</label>
+          <input
+            value={city}
+            onChange={e => setCity(e.target.value)}
+            placeholder="Dakar"
+            className="w-full bg-surface-container-low rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary-container text-sm"
+          />
+        </div>
+        <button
+          onClick={handleSaveProfile}
+          disabled={saving}
+          className="w-full bg-primary-container text-primary-container-foreground py-4 rounded-full font-headline font-extrabold text-sm hover:scale-[0.97] transition-transform disabled:opacity-50 mt-2"
+        >
+          {saving ? "Enregistrement..." : "Enregistrer"}
+        </button>
+      </div>
+    </div>
+  );
 
-          {/* ═══════ ORDERS ═══════ */}
-          {activeTab === "orders" && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <h2 className="text-xl font-headline font-extrabold tracking-tighter mb-4">Toutes mes commandes</h2>
-              {loadingOrders ? (
-                <div className="py-16 text-center">
-                  <span className="material-symbols-outlined text-4xl text-on-surface-variant animate-spin">progress_activity</span>
-                </div>
-              ) : orders.length === 0 ? (
-                <div className="text-center py-16 bg-card rounded-2xl border border-border/20">
-                  <span className="material-symbols-outlined text-5xl text-on-surface-variant/30 mb-3">receipt_long</span>
-                  <p className="font-headline font-bold text-base mb-1">Aucune commande</p>
-                  <p className="text-on-surface-variant text-sm mb-5">Vos commandes apparaîtront ici.</p>
-                  <Link to="/marche" className="inline-block bg-primary-container text-primary-container-foreground px-6 py-3 rounded-full font-bold text-sm hover:scale-95 transition-transform">
-                    Découvrir le Marché
-                  </Link>
-                </div>
+  const renderAddresses = () => (
+    <div className="max-w-lg mt-8">
+      <h2 className="text-2xl font-extrabold tracking-tight mb-6">Mes Adresses</h2>
+      <div className="bg-surface-container-lowest rounded-3xl p-6 md:p-8 space-y-4">
+        <div>
+          <label className="text-xs font-bold text-on-surface-variant mb-1.5 block uppercase tracking-wider">Adresse principale</label>
+          <textarea
+            value={address}
+            onChange={e => setAddress(e.target.value)}
+            rows={3}
+            placeholder="Votre adresse complète de livraison"
+            className="w-full bg-surface-container-low rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary-container text-sm resize-none"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-bold text-on-surface-variant mb-1.5 block uppercase tracking-wider">Ville</label>
+          <input
+            value={city}
+            onChange={e => setCity(e.target.value)}
+            placeholder="Dakar"
+            className="w-full bg-surface-container-low rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary-container text-sm"
+          />
+        </div>
+        <div>
+          <label className="text-xs font-bold text-on-surface-variant mb-1.5 block uppercase tracking-wider">Téléphone</label>
+          <input
+            value={phone}
+            onChange={e => setPhone(e.target.value)}
+            placeholder="77 000 00 00"
+            type="tel"
+            className="w-full bg-surface-container-low rounded-2xl p-4 outline-none focus:ring-2 focus:ring-primary-container text-sm"
+          />
+        </div>
+        <button
+          onClick={handleSaveProfile}
+          disabled={saving}
+          className="w-full bg-primary-container text-primary-container-foreground py-4 rounded-full font-headline font-extrabold text-sm hover:scale-[0.97] transition-transform disabled:opacity-50 mt-2"
+        >
+          {saving ? "Enregistrement..." : "Enregistrer l'adresse"}
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (activeNav) {
+      case "orders": return renderOrders();
+      case "profile": return renderProfile();
+      case "addresses": return renderAddresses();
+      default: return renderOverview();
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background font-body flex">
+      {sidebarOpen && (
+        <div className="fixed inset-0 bg-foreground/40 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`h-screen w-72 fixed left-0 top-0 bg-background font-headline flex flex-col p-8 gap-8 z-50 border-r border-border/30 transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+        style={{ paddingTop: "calc(env(safe-area-inset-top, 0px) + 2rem)" }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <h2 className="text-xl font-extrabold tracking-tight text-foreground leading-tight">
+              {profile?.full_name || "Mon Compte"}
+            </h2>
+            <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">Acheteur</span>
+          </div>
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-2 rounded-full hover:bg-surface-container">
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <nav className="flex flex-col gap-1 flex-grow">
+          {navItems.map(item => (
+            <button
+              key={item.id}
+              onClick={() => { setActiveNav(item.id); setSidebarOpen(false); }}
+              className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl font-bold text-sm transition-all duration-200 ${
+                activeNav === item.id
+                  ? "bg-primary-container text-primary-container-foreground shadow-sm"
+                  : "text-on-surface-variant hover:bg-surface-container-low hover:text-foreground"
+              }`}
+            >
+              <span className="material-symbols-outlined text-xl">{item.icon}</span>
+              {item.label}
+            </button>
+          ))}
+        </nav>
+
+        <button onClick={() => { signOut(); navigate("/"); }} className="flex items-center gap-3 px-5 py-3.5 text-destructive font-bold hover:bg-destructive/10 rounded-2xl transition-colors text-sm">
+          <span className="material-symbols-outlined text-xl">logout</span>
+          Déconnexion
+        </button>
+      </aside>
+
+      {/* Main Content */}
+      <main className="lg:ml-72 flex-1 min-h-screen">
+        <header className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl px-5 md:px-10 py-4 md:py-5 flex items-center justify-between border-b border-border/20 safe-area-top">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-full hover:bg-surface-container">
+              <span className="material-symbols-outlined text-2xl">menu</span>
+            </button>
+            <h3 className="text-lg font-headline font-bold text-on-surface-variant">
+              {navItems.find(n => n.id === activeNav)?.label || "Mon Compte"}
+            </h3>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link to="/marche" className="hidden md:flex items-center gap-2 text-sm font-bold text-on-surface-variant hover:text-foreground transition-colors">
+              <span className="material-symbols-outlined text-lg">storefront</span>
+              Marché
+            </Link>
+            <button
+              onClick={() => avatarInputRef.current?.click()}
+              className="relative w-10 h-10 rounded-full overflow-hidden bg-surface-container-high flex items-center justify-center group"
+            >
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
               ) : (
-                <div className="space-y-3">
-                  {orders.map((order, i) => {
-                    const s = statusLabels[order.status] || statusLabels.pending;
-                    return (
-                      <motion.div
-                        key={order.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.04 }}
-                        className="bg-card rounded-2xl p-5 border border-border/20"
-                      >
-                        <div className="flex flex-col sm:flex-row justify-between gap-3">
-                          <div>
-                            <div className="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">
-                              Commande #{order.id.slice(0, 8)}
-                            </div>
-                            <div className="text-xl font-headline font-extrabold mt-1">{formatPrice(order.total)}</div>
-                            <div className="text-sm text-on-surface-variant mt-1">
-                              {new Date(order.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-                            </div>
-                          </div>
-                          <span className={`self-start px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 ${s.color}`}>
-                            <span className="material-symbols-outlined text-sm">{s.icon}</span>
-                            {s.label}
-                          </span>
-                        </div>
-                        <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-on-surface-variant">
-                          {order.payment_method && (
-                            <span className="flex items-center gap-1.5">
-                              <img
-                                src={order.payment_method === "wave" ? waveLogo : orangeMoneyLogo}
-                                alt=""
-                                className="w-4 h-4 rounded-full object-cover"
-                              />
-                              {order.payment_method === "wave" ? "Wave" : "Orange Money"}
-                            </span>
-                          )}
-                          {order.shipping_city && (
-                            <span className="flex items-center gap-1">
-                              <span className="material-symbols-outlined text-base">location_on</span>
-                              {order.shipping_city}
-                            </span>
-                          )}
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
+                <span className="material-symbols-outlined text-on-surface-variant">person</span>
               )}
-            </motion.div>
-          )}
-
-          {/* ═══════ PROFILE ═══════ */}
-          {activeTab === "profile" && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-lg">
-              <h2 className="text-xl font-headline font-extrabold tracking-tighter mb-5">Mon Profil</h2>
-              <div className="bg-card rounded-2xl p-6 border border-border/20 space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Nom complet</label>
-                  <input
-                    value={fullName}
-                    onChange={e => setFullName(e.target.value)}
-                    className="w-full bg-surface-container-low rounded-xl p-3.5 outline-none focus:ring-2 focus:ring-primary-container text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Email</label>
-                  <input
-                    value={user.email || ""}
-                    disabled
-                    className="w-full bg-surface-container-low rounded-xl p-3.5 text-sm opacity-60 cursor-not-allowed"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Téléphone</label>
-                  <input
-                    value={phone}
-                    onChange={e => setPhone(e.target.value)}
-                    placeholder="77 000 00 00"
-                    type="tel"
-                    className="w-full bg-surface-container-low rounded-xl p-3.5 outline-none focus:ring-2 focus:ring-primary-container text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Ville</label>
-                  <input
-                    value={city}
-                    onChange={e => setCity(e.target.value)}
-                    placeholder="Dakar"
-                    className="w-full bg-surface-container-low rounded-xl p-3.5 outline-none focus:ring-2 focus:ring-primary-container text-sm"
-                  />
-                </div>
-                <button
-                  onClick={handleSaveProfile}
-                  disabled={saving}
-                  className="w-full bg-primary-container text-primary-container-foreground py-3.5 rounded-full font-headline font-extrabold text-sm hover:scale-[0.97] transition-transform disabled:opacity-50"
-                >
-                  {saving ? "Enregistrement..." : "Enregistrer"}
-                </button>
+              <div className="absolute inset-0 bg-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="material-symbols-outlined text-surface text-sm">photo_camera</span>
               </div>
+            </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={e => { const file = e.target.files?.[0]; if (file) handleAvatarUpload(file); }}
+            />
+          </div>
+        </header>
 
-              <div className="mt-6 bg-card rounded-2xl p-6 border border-border/20">
-                <h3 className="font-headline font-extrabold text-sm mb-3 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-lg text-destructive">warning</span>
-                  Zone dangereuse
-                </h3>
-                <button
-                  onClick={() => { signOut(); navigate("/"); }}
-                  className="w-full border border-destructive/30 text-destructive py-3 rounded-xl font-bold text-sm hover:bg-destructive/10 transition-colors flex items-center justify-center gap-2"
-                >
-                  <span className="material-symbols-outlined text-lg">logout</span>
-                  Se déconnecter
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* ═══════ ADDRESSES ═══════ */}
-          {activeTab === "addresses" && (
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-lg">
-              <h2 className="text-xl font-headline font-extrabold tracking-tighter mb-5">Mes Adresses</h2>
-              <div className="bg-card rounded-2xl p-6 border border-border/20 space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Adresse principale</label>
-                  <textarea
-                    value={address}
-                    onChange={e => setAddress(e.target.value)}
-                    rows={3}
-                    placeholder="Votre adresse complète de livraison"
-                    className="w-full bg-surface-container-low rounded-xl p-3.5 outline-none focus:ring-2 focus:ring-primary-container text-sm resize-none"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Ville</label>
-                  <input
-                    value={city}
-                    onChange={e => setCity(e.target.value)}
-                    placeholder="Dakar"
-                    className="w-full bg-surface-container-low rounded-xl p-3.5 outline-none focus:ring-2 focus:ring-primary-container text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-on-surface-variant mb-1 block">Téléphone</label>
-                  <input
-                    value={phone}
-                    onChange={e => setPhone(e.target.value)}
-                    placeholder="77 000 00 00"
-                    type="tel"
-                    className="w-full bg-surface-container-low rounded-xl p-3.5 outline-none focus:ring-2 focus:ring-primary-container text-sm"
-                  />
-                </div>
-                <button
-                  onClick={handleSaveProfile}
-                  disabled={saving}
-                  className="w-full bg-primary-container text-primary-container-foreground py-3.5 rounded-full font-headline font-extrabold text-sm hover:scale-[0.97] transition-transform disabled:opacity-50"
-                >
-                  {saving ? "Enregistrement..." : "Enregistrer l'adresse"}
-                </button>
-              </div>
-            </motion.div>
-          )}
+        <div className="px-5 md:px-10 pb-12">
+          {renderContent()}
         </div>
       </main>
-      <Footer />
     </div>
   );
 };
