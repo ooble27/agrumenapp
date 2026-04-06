@@ -68,9 +68,9 @@ const Navbar = () => {
               onMouseLeave={handleMarcheLeave}
             >
               <button
-                className={`flex items-center gap-1 px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                className={`flex items-center gap-1 px-3.5 py-2 rounded-md text-[13px] font-bold transition-all duration-150 ${
                   isActive("/marche") || marcheOpen
-                    ? "text-foreground bg-surface-container"
+                    ? "text-primary-container-foreground bg-primary-container/20"
                     : "text-on-surface-variant hover:text-foreground hover:bg-surface-container/50"
                 }`}
                 onClick={() => setMarcheOpen(!marcheOpen)}
@@ -150,9 +150,9 @@ const Navbar = () => {
             {user && (
               <Link
                 to={accountPath}
-                  className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                  className={`px-3.5 py-2 rounded-md text-[13px] font-bold transition-all duration-150 ${
                   isActive("/mon-compte") || (role === "seller" && isActive("/dashboard"))
-                    ? "text-foreground bg-surface-container"
+                    ? "text-primary-container-foreground bg-primary-container/20"
                     : "text-on-surface-variant hover:text-foreground hover:bg-surface-container/50"
                 }`}
               >
@@ -163,9 +163,9 @@ const Navbar = () => {
             {user && role === "seller" && (
               <Link
                 to="/dashboard"
-                className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+                className={`px-3.5 py-2 rounded-md text-[13px] font-bold transition-all duration-150 ${
                   isActive("/dashboard")
-                    ? "text-foreground bg-surface-container"
+                    ? "text-primary-container-foreground bg-primary-container/20"
                     : "text-on-surface-variant hover:text-foreground hover:bg-surface-container/50"
                 }`}
               >
