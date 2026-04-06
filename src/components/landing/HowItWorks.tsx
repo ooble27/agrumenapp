@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import farmPeppers from "@/assets/farm-peppers.jpg";
 import farmFieldWide from "@/assets/farm-field-wide.jpg";
-import farmTeam from "@/assets/farm-team.jpg";
+import seedlingClose from "@/assets/seedling-close.jpg";
 import farmNursery1 from "@/assets/farm-nursery-1.jpg";
 
 const services = [
@@ -22,7 +22,7 @@ const services = [
     tag: "Traçabilité",
     title: "Du Champ à Votre Table",
     desc: "Suivez le parcours de chaque produit, de la récolte jusqu'à votre porte, en toute transparence.",
-    image: farmTeam,
+    image: seedlingClose,
   },
   {
     tag: "Bio & Local",

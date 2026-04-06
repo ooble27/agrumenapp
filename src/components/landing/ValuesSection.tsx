@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import farmPeppers from "@/assets/farm-peppers.jpg";
-import farmTeam from "@/assets/farm-team.jpg";
+import seedlingGrow1 from "@/assets/seedling-grow-1.jpg";
 import farmNursery1 from "@/assets/farm-nursery-1.jpg";
 import farmNursery3 from "@/assets/farm-nursery-3.jpg";
 import farmFieldWide from "@/assets/farm-field-wide.jpg";
@@ -57,8 +57,8 @@ const ValuesSection = () => {
         >
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group">
             <img
-              src={farmTeam}
-              alt="Notre équipe sur le terrain"
+              src={seedlingGrow1}
+              alt="Croissance des plants"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
               width={400}
