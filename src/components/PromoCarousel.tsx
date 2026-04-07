@@ -111,7 +111,7 @@ const PromoCarousel = () => {
             <Link
               key={banner.id}
               to={banner.link}
-              className={`shrink-0 w-[85%] md:w-[45%] lg:w-[30%] snap-start relative ${banner.bg} rounded-lg p-4 md:p-6 flex items-center overflow-hidden min-h-[120px] md:min-h-[140px] group`}
+              className={`shrink-0 w-[85%] md:w-[45%] lg:w-[30%] snap-start relative ${banner.bg} rounded-lg p-4 md:p-6 flex items-center overflow-hidden min-h-[120px] md:min-h-[180px] lg:min-h-[160px] group`}
             >
               <div className="flex-1 relative z-10">
                 <span className={`inline-block ${banner.badgeColor || "bg-white/20 backdrop-blur-sm text-white"} text-[10px] md:text-xs font-bold uppercase px-2.5 py-1 rounded mb-2`}>
