@@ -1,15 +1,15 @@
 import Navbar from "@/components/Navbar";
 import { toast } from "sonner";
-
 import { Link, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { buildMarketCategories, getCategoryKey, MOCK_PRODUCTS, type MarketProduct } from "@/data/marketplaceMocks";
+import { buildMarketCategories, getCategoryKey, groupByCategory, MOCK_PRODUCTS, type MarketProduct } from "@/data/marketplaceMocks";
 import type { Category } from "@/types/database";
 import ProductCard from "@/components/ProductCard";
 import PromoCarousel from "@/components/PromoCarousel";
+import HorizontalProductRow from "@/components/HorizontalProductRow";
 
 type Product = MarketProduct;
 
@@ -26,13 +26,8 @@ const Marche = () => {
   const handleCategoryChange = (catId: string | null) => {
     setSearchParams((current) => {
       const next = new URLSearchParams(current);
-
-      if (catId) {
-        next.set("cat", catId);
-      } else {
-        next.delete("cat");
-      }
-
+      if (catId) next.set("cat", catId);
+      else next.delete("cat");
       return next;
     });
   };
@@ -40,11 +35,7 @@ const Marche = () => {
   useEffect(() => {
     const fetchData = async () => {
       const [prodRes, catRes] = await Promise.all([
-        supabase
-          .from("products")
-          .select("*, shops(name, seller_id), categories(name, icon)")
-          .eq("is_active", true)
-          .order("created_at", { ascending: false }),
+        supabase.from("products").select("*, shops(name, seller_id), categories(name, icon)").eq("is_active", true).order("created_at", { ascending: false }),
         supabase.from("categories").select("*").order("name"),
       ]);
       if (prodRes.data) setDbProducts(prodRes.data as Product[]);
@@ -54,10 +45,8 @@ const Marche = () => {
     fetchData();
   }, []);
 
-  // Merge DB products with mock products (mock IDs start with "m")
   const products = useMemo(() => {
     const dbIds = new Set(dbProducts.map(p => p.id));
-    // Only add mock products that don't conflict
     const mocks = MOCK_PRODUCTS.filter(m => !dbIds.has(m.id));
     return [...dbProducts, ...mocks];
   }, [dbProducts]);
@@ -76,11 +65,7 @@ const Marche = () => {
 
   const selectedCategoryLabel = useMemo(() => {
     if (!selectedCategoryKey) return null;
-
-    return (
-      categories.find((category) => (getCategoryKey(category.name) ?? category.id) === selectedCategoryKey)?.name ??
-      "Catégorie"
-    );
+    return categories.find((category) => (getCategoryKey(category.name) ?? category.id) === selectedCategoryKey)?.name ?? "Catégorie";
   }, [categories, selectedCategoryKey]);
 
   const isCategorySelected = (category: Category) =>
@@ -94,6 +79,10 @@ const Marche = () => {
     const matchSearch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchCat && matchSearch;
   });
+
+  const categoryGroups = useMemo(() => groupByCategory(products), [products]);
+
+  const isFiltering = !!selectedCategoryKey || !!searchQuery;
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.preventDefault();
@@ -120,16 +109,14 @@ const Marche = () => {
       <Navbar />
       <main className="pt-28 md:pt-24">
 
-        {/* ═══════ BREADCRUMB ═══════ */}
+        {/* Breadcrumb */}
         <section className="px-5 md:px-12 pt-3 md:pt-4 max-w-[1440px] mx-auto">
           <nav className="flex items-center gap-1.5 text-xs text-on-surface-variant">
             <Link to="/" className="hover:text-foreground transition-colors">Accueil</Link>
             <span className="material-symbols-outlined text-sm">chevron_right</span>
             {selectedCategoryKey ? (
               <>
-                <button onClick={() => handleCategoryChange(null)} className="hover:text-foreground transition-colors">
-                  Marché
-                </button>
+                <button onClick={() => handleCategoryChange(null)} className="hover:text-foreground transition-colors">Marché</button>
                 <span className="material-symbols-outlined text-sm">chevron_right</span>
                 <span className="text-foreground font-semibold">{selectedCategoryLabel || "Catégorie"}</span>
               </>
@@ -139,7 +126,7 @@ const Marche = () => {
           </nav>
         </section>
 
-        {/* ═══════ HEADER — all screens ═══════ */}
+        {/* Header */}
         <section className="px-5 md:px-12 pt-2 md:pt-4 max-w-[1440px] mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -171,20 +158,18 @@ const Marche = () => {
           </div>
         </section>
 
-        {/* ═══════ PROMO BANNERS CAROUSEL ═══════ */}
+        {/* Promo banners */}
         <section className="px-5 md:px-12 mt-4 max-w-[1440px] mx-auto">
           <PromoCarousel />
         </section>
 
-        {/* ═══════ CATEGORIES ═══════ */}
+        {/* Categories */}
         <section className="px-5 md:px-12 mt-4 md:mb-6 max-w-[1440px] mx-auto">
           <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
             <button
               onClick={() => handleCategoryChange(null)}
               className={`shrink-0 px-4 py-2 rounded-md text-xs font-headline font-semibold transition-colors ${
-                  !selectedCategoryKey
-                  ? "bg-foreground text-background"
-                  : "bg-surface-container text-on-surface-variant"
+                !selectedCategoryKey ? "bg-foreground text-background" : "bg-surface-container text-on-surface-variant"
               }`}
             >
               Tout
@@ -194,9 +179,7 @@ const Marche = () => {
                 key={cat.id}
                 onClick={() => handleCategoryChange(isCategorySelected(cat) ? null : cat.id)}
                 className={`shrink-0 px-4 py-2 rounded-md text-xs font-headline font-semibold transition-colors flex items-center gap-1.5 ${
-                  isCategorySelected(cat)
-                    ? "bg-foreground text-background"
-                    : "bg-surface-container text-on-surface-variant"
+                  isCategorySelected(cat) ? "bg-foreground text-background" : "bg-surface-container text-on-surface-variant"
                 }`}
               >
                 {cat.icon && <span className="material-symbols-outlined text-sm">{cat.icon}</span>}
@@ -206,7 +189,7 @@ const Marche = () => {
           </div>
         </section>
 
-        {/* ═══════ PRODUCTS ═══════ */}
+        {/* Products */}
         <section className="mt-3 md:mt-0 max-w-[1440px] mx-auto pb-4">
           {loading ? (
             <div className="px-5 md:px-12 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
@@ -218,19 +201,44 @@ const Marche = () => {
                 </div>
               ))}
             </div>
-          ) : filtered.length === 0 ? (
-            <div className="text-center py-16 mx-5">
-              <span className="material-symbols-outlined text-5xl text-on-surface-variant/30 mb-4 block">search_off</span>
-              <p className="font-headline font-bold text-lg mb-2">Aucun produit trouvé</p>
-              <p className="text-on-surface-variant text-sm">
-                {searchQuery ? "Essayez avec d'autres termes." : "Aucun produit dans cette catégorie."}
-              </p>
-            </div>
+          ) : isFiltering ? (
+            /* Filtered view — flat grid */
+            filtered.length === 0 ? (
+              <div className="text-center py-16 mx-5">
+                <span className="material-symbols-outlined text-5xl text-on-surface-variant/30 mb-4 block">search_off</span>
+                <p className="font-headline font-bold text-lg mb-2">Aucun produit trouvé</p>
+                <p className="text-on-surface-variant text-sm">
+                  {searchQuery ? "Essayez avec d'autres termes." : "Aucun produit dans cette catégorie."}
+                </p>
+              </div>
+            ) : (
+              <div className="px-5 md:px-12 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
+                {filtered.map((product, i) => (
+                  <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} formatPrice={formatPrice} index={i} />
+                ))}
+              </div>
+            )
           ) : (
-            /* All products grid - always show flat grid */
-            <div className="px-5 md:px-12 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
-              {filtered.map((product, i) => (
-                <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} formatPrice={formatPrice} index={i} />
+            /* Default: horizontal scroll sections by category */
+            <div className="space-y-2">
+              {/* "Populaires" — first 8 products mixed */}
+              <HorizontalProductRow
+                title="Populaires 🔥"
+                products={products.slice(0, 10)}
+                onAddToCart={handleAddToCart}
+                formatPrice={formatPrice}
+              />
+
+              {/* By category */}
+              {categoryGroups.map((group) => (
+                <HorizontalProductRow
+                  key={group.label}
+                  title={group.label}
+                  icon={group.icon}
+                  products={group.products}
+                  onAddToCart={handleAddToCart}
+                  formatPrice={formatPrice}
+                />
               ))}
             </div>
           )}
