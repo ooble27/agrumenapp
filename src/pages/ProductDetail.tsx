@@ -414,13 +414,15 @@ const ProductDetail = () => {
 
           <div className="h-2 bg-surface-container" />
 
-          {/* Related products */}
+          {/* Related products — horizontal scroll */}
           {relatedProducts.length > 0 && (
-            <div className="px-5 py-5">
-              <h3 className="font-headline font-extrabold text-lg mb-4">Vous aimerez aussi</h3>
-              <div className="grid grid-cols-2 gap-3">
+            <div className="py-5">
+              <h3 className="font-headline font-extrabold text-lg mb-4 px-5">Vous aimerez aussi</h3>
+              <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pl-5 pr-3 pb-1">
                 {visibleRelated.map((p, i) => (
-                  <ProductCard key={p.id} product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
+                  <div key={p.id} className="shrink-0 w-[30vw] snap-start">
+                    <ProductCard product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
+                  </div>
                 ))}
               </div>
             </div>
