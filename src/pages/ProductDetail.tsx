@@ -419,9 +419,9 @@ const ProductDetail = () => {
             <div className="py-5 space-y-5">
               <div>
                 <h3 className="font-headline font-extrabold text-lg mb-4 px-5">Vous aimerez aussi</h3>
-                <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory px-5 pb-1">
+                <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1">
                   {visibleRelated.slice(0, 10).map((p, i) => (
-                    <div key={p.id} className="shrink-0 w-[28vw] snap-start">
+                    <div key={p.id} className="shrink-0 w-[28vw] snap-start first:ml-5 last:mr-5">
                       <ProductCard product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
                     </div>
                   ))}
@@ -431,9 +431,9 @@ const ProductDetail = () => {
               {visibleRelated.length > 10 && (
                 <div>
                   <h3 className="font-headline font-extrabold text-lg mb-4 px-5">Souvent achetés ensemble</h3>
-                  <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory px-5 pb-1">
+                  <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1">
                     {visibleRelated.slice(10, 20).map((p, i) => (
-                      <div key={p.id} className="shrink-0 w-[28vw] snap-start">
+                      <div key={p.id} className="shrink-0 w-[28vw] snap-start first:ml-5 last:mr-5">
                         <ProductCard product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
                       </div>
                     ))}
@@ -444,9 +444,9 @@ const ProductDetail = () => {
               {visibleRelated.length > 20 && (
                 <div>
                   <h3 className="font-headline font-extrabold text-lg mb-4 px-5">Découvrir plus</h3>
-                  <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory px-5 pb-1">
+                  <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1">
                     {visibleRelated.slice(20, 30).map((p, i) => (
-                      <div key={p.id} className="shrink-0 w-[28vw] snap-start">
+                      <div key={p.id} className="shrink-0 w-[28vw] snap-start first:ml-5 last:mr-5">
                         <ProductCard product={p} onAddToCart={handleAddRelated} formatPrice={(n) => n.toLocaleString("fr-FR")} index={i} />
                       </div>
                     ))}
