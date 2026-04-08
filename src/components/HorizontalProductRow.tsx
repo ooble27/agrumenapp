@@ -67,10 +67,10 @@ const HorizontalProductRow = ({ title, icon, products, onAddToCart, formatPrice,
       {/* Scrollable row */}
       <div
         ref={scrollRef}
-        className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pl-5 pr-3 md:pl-12 md:pr-8 pb-1"
+        className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1"
       >
         {products.map((product, i) => (
-          <div key={product.id} className="shrink-0 w-[30vw] md:w-[180px] lg:w-[190px] snap-start">
+          <div key={product.id} className="shrink-0 w-[30vw] md:w-[180px] lg:w-[190px] snap-start first:ml-5 last:mr-5 md:first:ml-12 md:last:mr-12">
             <ProductCard product={product} onAddToCart={onAddToCart} formatPrice={formatPrice} index={i} />
           </div>
         ))}
