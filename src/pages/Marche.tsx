@@ -220,25 +220,28 @@ const Marche = () => {
             )
           ) : (
             /* Default: horizontal scroll sections by category */
-            <div className="space-y-2">
+            <div className="divide-y divide-border/30">
               {/* "Populaires" — first 8 products mixed */}
-              <HorizontalProductRow
-                title="Populaires 🔥"
-                products={products.slice(0, 10)}
-                onAddToCart={handleAddToCart}
-                formatPrice={formatPrice}
-              />
-
-              {/* By category */}
-              {categoryGroups.map((group) => (
+              <div className="py-4">
                 <HorizontalProductRow
-                  key={group.label}
-                  title={group.label}
-                  icon={group.icon}
-                  products={group.products}
+                  title="Populaires 🔥"
+                  products={products.slice(0, 10)}
                   onAddToCart={handleAddToCart}
                   formatPrice={formatPrice}
                 />
+              </div>
+
+              {/* By category */}
+              {categoryGroups.map((group) => (
+                <div key={group.label} className="py-4">
+                  <HorizontalProductRow
+                    title={group.label}
+                    icon={group.icon}
+                    products={group.products}
+                    onAddToCart={handleAddToCart}
+                    formatPrice={formatPrice}
+                  />
+                </div>
               ))}
             </div>
           )}
