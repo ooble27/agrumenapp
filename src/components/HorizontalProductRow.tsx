@@ -69,11 +69,13 @@ const HorizontalProductRow = ({ title, icon, products, onAddToCart, formatPrice,
         ref={scrollRef}
         className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1"
       >
+        <div aria-hidden="true" className="w-5 md:w-12 shrink-0" />
         {products.map((product, i) => (
-          <div key={product.id} className="shrink-0 w-[30vw] md:w-[180px] lg:w-[190px] snap-start first:ml-5 last:mr-5 md:first:ml-12 md:last:mr-12">
+          <div key={product.id} className="shrink-0 w-[30vw] md:w-[180px] lg:w-[190px] snap-start">
             <ProductCard product={product} onAddToCart={onAddToCart} formatPrice={formatPrice} index={i} />
           </div>
         ))}
+        <div aria-hidden="true" className="w-5 md:w-12 shrink-0" />
       </div>
     </motion.section>
   );
