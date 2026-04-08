@@ -31,7 +31,7 @@ const HorizontalProductRow = ({ title, icon, products, onAddToCart, formatPrice,
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.4 }}
-      className="mb-6"
+      className=""
     >
       {/* Header */}
       <div className="flex items-center justify-between px-5 md:px-12 mb-3">
