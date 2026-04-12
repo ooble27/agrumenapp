@@ -364,7 +364,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
   }),
   createMockProduct({
     id: "m24", name: "Sorgho", price: 450, unit: "le kg", categoryId: "cat-cereales",
-    imageUrl: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&h=400&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=400&fit=crop",
     description: "Sorgho traditionnel pour bouillie, couscous et bière de mil artisanale.", stock: 28, sellerIdx: 3,
   }),
   createMockProduct({
@@ -381,7 +381,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
   }),
   createMockProduct({
     id: "m32", name: "Manioc", price: 350, unit: "le kg", categoryId: "cat-tubercules",
-    imageUrl: "https://images.unsplash.com/photo-1598512752271-33f913a5af13?w=400&h=400&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1599690925058-90e1a0b56154?w=400&h=400&fit=crop",
     description: "Manioc frais pour attieké, foutou et accompagnements traditionnels.", stock: 25, sellerIdx: 1,
   }),
   createMockProduct({
@@ -391,12 +391,12 @@ export const MOCK_PRODUCTS: MockProduct[] = [
   }),
   createMockProduct({
     id: "m34", name: "Pomme de Terre", price: 400, unit: "le kg", categoryId: "cat-tubercules",
-    imageUrl: "https://images.unsplash.com/photo-1518977676601-b53f82ber6f2?w=400&h=400&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1518977676601-b53f82bbe9e8?w=400&h=400&fit=crop",
     description: "Pommes de terre fermes pour frites, ragoûts et plats gratinés.", stock: 30, sellerIdx: 3,
   }),
   createMockProduct({
     id: "m35", name: "Taro", price: 550, unit: "le kg", categoryId: "cat-tubercules",
-    imageUrl: "https://images.unsplash.com/photo-1590165482129-1b8b27698780?w=400&h=400&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400&h=400&fit=crop",
     description: "Taro doux et farineux pour purées, soupes et accompagnements savoureux.", stock: 12, sellerIdx: 0,
   }),
 
@@ -423,7 +423,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
   }),
   createMockProduct({
     id: "m45", name: "Clou de Girofle", price: 5000, unit: "le kg", categoryId: "cat-epices",
-    imageUrl: "https://images.unsplash.com/photo-1599909533601-aa23a47b5fee?w=400&h=400&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1541855492-581f618f69a0?w=400&h=400&fit=crop",
     description: "Clous de girofle entiers pour infusions, marinades et pâtisseries parfumées.", stock: 6, sellerIdx: 3,
   }),
   createMockProduct({
