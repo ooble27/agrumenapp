@@ -1,92 +1,46 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import heroGuy from "@/assets/hero-delivery-guy.png";
 
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-primary">
-      {/* Decorative blobs */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 -right-32 h-[500px] w-[500px] rounded-full bg-primary-foreground/[0.04] blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 h-[400px] w-[400px] rounded-full bg-primary-foreground/[0.06] blur-3xl" />
-      </div>
-
-      <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-[1200px] flex-col items-center justify-center px-5 py-28 text-center sm:px-8 lg:py-32">
-        {/* Badge */}
+    <section className="relative overflow-hidden bg-background">
+      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-7xl flex-col items-center justify-start overflow-hidden px-4 pb-6 pt-24 sm:px-6 lg:grid lg:grid-cols-[1.12fr_0.88fr] lg:items-center lg:justify-normal lg:gap-0 lg:px-16 lg:pb-0 lg:pt-0">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
+          initial={{ opacity: 0, x: -24, scale: 0.97 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative z-10 mt-4 flex w-full justify-center sm:mt-6 md:mt-8 lg:mt-0 lg:justify-start"
         >
-          <span className="inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-4 py-2 text-xs font-headline font-bold uppercase tracking-[0.15em] text-primary-foreground/80 backdrop-blur-sm">
-            <span className="material-symbols-outlined text-sm">eco</span>
-            100% Produits Locaux & Naturels
-          </span>
+          <img
+            src={heroGuy}
+            alt="Livreur Agrumen avec panier de produits frais"
+            className="-ml-[10vw] w-[120vw] max-w-none object-contain sm:-ml-4 sm:w-[90vw] md:ml-0 md:w-[680px] lg:-ml-20 lg:w-[760px] xl:w-[860px]"
+            width={1344}
+            height={896}
+          />
         </motion.div>
 
-        {/* Main headline */}
-        <motion.h1
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-headline text-[2.8rem] font-extrabold leading-[0.92] tracking-[-0.04em] text-primary-foreground sm:text-[4rem] md:text-[5.5rem] lg:text-[7rem] xl:text-[8rem]"
+          transition={{ duration: 0.7, delay: 0.12, ease: "easeOut" }}
+          className="relative z-20 mt-4 flex w-full items-center justify-end sm:mt-6 md:mt-8 md:justify-center lg:mt-0 lg:justify-end"
         >
-          Du Champ
-          <br />
-          <span className="text-primary-foreground/60">à Votre</span>
-          <br />
-          Table.
-        </motion.h1>
+          <div className="w-[88%] max-w-[29rem] rounded-xl bg-primary px-5 py-6 shadow-2xl sm:w-[82%] sm:px-7 sm:py-7 md:w-full md:max-w-[34rem] md:px-10 md:py-10 lg:rounded-2xl lg:px-12 lg:py-14">
+            <h1 className="font-headline text-[2.15rem] font-extrabold leading-[0.9] tracking-[-0.055em] text-primary-foreground sm:text-[3rem] md:text-[4rem] lg:text-[5.2rem] xl:text-[5.8rem]">
+              <span className="block">Du Champ</span>
+              <span className="block">à Votre Table</span>
+            </h1>
 
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-6 max-w-lg text-sm font-body leading-relaxed text-primary-foreground/70 sm:mt-8 sm:text-base md:max-w-xl md:text-lg"
-        >
-          Fruits, légumes, céréales — 100% frais, 100% sénégalais.
-          Commandez en un clic et recevez chez vous en 24h.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.45 }}
-          className="mt-8 flex flex-col items-center gap-3 sm:mt-10 sm:flex-row sm:gap-4"
-        >
-          <Link
-            to="/marche"
-            className="inline-flex items-center gap-2 rounded-full bg-background px-8 py-4 font-headline text-sm font-bold text-primary shadow-xl transition-all hover:scale-[1.03] active:scale-[0.97] sm:px-10 sm:py-4 sm:text-base"
-          >
-            Commander maintenant
-            <span className="material-symbols-outlined text-lg">arrow_forward</span>
-          </Link>
-          <a
-            href="#mission"
-            className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/20 px-6 py-3.5 font-headline text-sm font-medium text-primary-foreground/80 transition-all hover:bg-primary-foreground/10 sm:px-8 sm:py-4"
-          >
-            En savoir plus
-            <span className="material-symbols-outlined text-base">expand_more</span>
-          </a>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 0.8 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-          >
-            <span className="material-symbols-outlined text-2xl text-primary-foreground/30">
-              keyboard_arrow_down
-            </span>
-          </motion.div>
+            <Link
+              to="/marche"
+              className="mt-5 inline-flex items-center gap-2 rounded-xl bg-background px-4 py-2.5 font-headline text-[12px] font-bold text-primary transition-all hover:opacity-90 active:scale-[0.97] sm:mt-6 sm:px-5 sm:py-3 sm:text-[13px] md:px-6 md:py-3.5 md:text-sm lg:mt-8 lg:px-8 lg:py-4"
+            >
+              Commander maintenant
+              <span className="material-symbols-outlined text-base sm:text-lg">arrow_forward</span>
+            </Link>
+          </div>
         </motion.div>
       </div>
     </section>

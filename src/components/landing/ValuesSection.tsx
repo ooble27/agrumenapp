@@ -1,54 +1,163 @@
 import { motion } from "framer-motion";
-
-const values = [
-  { icon: "spa", title: "Fraîcheur Garantie", desc: "Récolté le matin, livré l'après-midi. Nos produits ne passent jamais par des entrepôts." },
-  { icon: "public", title: "Circuit Court", desc: "Zéro intermédiaire entre le producteur et votre assiette. Plus frais, plus juste." },
-  { icon: "eco", title: "Zéro Pesticide", desc: "Tous nos producteurs s'engagent à des pratiques agricoles 100% naturelles et responsables." },
-  { icon: "favorite", title: "Impact Local", desc: "Chaque commande finance directement les agriculteurs sénégalais et leurs familles." },
-  { icon: "inventory_2", title: "Emballage Éco", desc: "Nos emballages sont recyclables et conçus pour minimiser le gaspillage alimentaire." },
-  { icon: "star", title: "Qualité Premium", desc: "Chaque produit est inspecté et sélectionné selon des standards de qualité stricts." },
-];
+import illustFarmerField from "@/assets/illust-farmer-field.png";
+import illustSeedlings from "@/assets/illust-seedlings.png";
+import illustBio from "@/assets/illust-bio.png";
+import illustSelection from "@/assets/illust-selection.png";
+import illustTeamFarming from "@/assets/illust-team-farming.png";
+import illustFarmerWoman from "@/assets/illust-farmer-woman.png";
 
 const ValuesSection = () => {
   return (
-    <section id="valeurs" className="px-5 md:px-8 max-w-[1200px] mx-auto py-20 md:py-32">
+    <section id="valeurs" className="px-4 md:px-8 max-w-[1200px] mx-auto py-20 md:py-32">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.7 }}
-        className="mb-12 md:mb-16 max-w-2xl"
+        className="mb-12 md:mb-16"
       >
-        <span className="inline-flex items-center gap-2 text-xs font-headline font-semibold tracking-[0.15em] uppercase text-primary mb-4 block">
-          <span className="inline-block h-px w-6 bg-primary" />
-          Nos Valeurs
-        </span>
-        <h2 className="text-3xl md:text-5xl lg:text-6xl font-headline font-extrabold tracking-[-0.03em] leading-[1.05]">
-          Ce qui nous
+        <h2 className="text-3xl md:text-5xl lg:text-6xl font-headline font-extrabold tracking-[-0.03em] leading-[1.05] max-w-2xl">
+          Collaborez & Apprenez
           <br />
-          <span className="text-on-surface-variant">rend différents.</span>
+          <span className="text-on-surface-variant">de Nos Experts</span>
         </h2>
       </motion.div>
 
-      {/* Values grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
-        {values.map((val, i) => (
-          <motion.div
-            key={val.title}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.08, duration: 0.5 }}
-            className="group rounded-2xl border border-outline-variant/50 bg-surface-container-lowest p-6 md:p-8 hover:border-primary/30 hover:shadow-md transition-all"
-          >
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-              <span className="material-symbols-outlined text-xl">{val.icon}</span>
+      {/* Masonry-like illustration grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        {/* Tall left */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="sm:col-span-1 md:row-span-2"
+        >
+          <div className="relative w-full aspect-[4/3] sm:aspect-[3/4] md:aspect-auto md:h-full md:min-h-[450px] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-4">
+            <img
+              src={illustFarmerField}
+              alt="Nos producteurs"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-lg"
+              loading="lazy"
+              width={896}
+              height={1200}
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/40 to-transparent">
+              <span className="text-xs font-headline font-bold text-white/90 tracking-wider uppercase">Nos Producteurs</span>
             </div>
-            <h3 className="font-headline font-bold text-base md:text-lg mb-2">{val.title}</h3>
-            <p className="text-sm text-on-surface-variant font-body leading-relaxed">{val.desc}</p>
-          </motion.div>
-        ))}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-4">
+            <img
+              src={illustSeedlings}
+              alt="Croissance des plants"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
+              loading="lazy"
+              width={400}
+              height={300}
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/40 to-transparent">
+              <span className="text-[10px] font-headline font-bold text-white/90 tracking-wider uppercase">Pépinière</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+        >
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-4">
+            <img
+              src={illustBio}
+              alt="Produits bio"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
+              loading="lazy"
+              width={400}
+              height={300}
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/40 to-transparent">
+              <span className="text-[10px] font-headline font-bold text-white/90 tracking-wider uppercase">Bio & Naturel</span>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-4">
+            <img
+              src={illustSelection}
+              alt="Sélection des produits"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
+              loading="lazy"
+              width={400}
+              height={300}
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/40 to-transparent">
+              <span className="text-[10px] font-headline font-bold text-white/90 tracking-wider uppercase">Sélection</span>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Bottom row */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.25 }}
+          className="sm:col-span-2 md:col-span-2"
+        >
+          <div className="relative aspect-[16/9] md:aspect-[2/1] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-6">
+            <img
+              src={illustTeamFarming}
+              alt="Notre équipe"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
+              loading="lazy"
+              width={1264}
+              height={848}
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="bg-white/90 backdrop-blur-sm rounded-full px-5 py-2.5 flex items-center gap-2 shadow-lg">
+                <span className="material-symbols-outlined text-primary text-xl">play_arrow</span>
+                <span className="text-xs font-headline font-bold">Découvrir Notre Mission</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+        >
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden group bg-primary/5 flex items-center justify-center p-4">
+            <img
+              src={illustFarmerWoman}
+              alt="Agricultrice"
+              className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700 drop-shadow-md"
+              loading="lazy"
+              width={896}
+              height={1200}
+            />
+            <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/40 to-transparent">
+              <span className="text-[10px] font-headline font-bold text-white/90 tracking-wider uppercase">Nos Agricultrices</span>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       <div className="mt-20 md:mt-28 h-px bg-outline-variant" />
