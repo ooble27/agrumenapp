@@ -359,7 +359,7 @@ export const MOCK_PRODUCTS: MockProduct[] = [
   }),
   createMockProduct({
     id: "m23", name: "Fonio", price: 900, unit: "le kg", categoryId: "cat-cereales",
-    imageUrl: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&h=400&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop&q=80&auto=format",
     description: "Fonio, céréale ancestrale africaine sans gluten, riche en acides aminés.", stock: 20, sellerIdx: 2,
   }),
   createMockProduct({
