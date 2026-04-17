@@ -1,46 +1,82 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import heroGuy from "@/assets/hero-delivery-guy.png";
 
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-background">
-      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-7xl flex-col items-center justify-start overflow-hidden px-4 pb-6 pt-24 sm:px-6 lg:grid lg:grid-cols-[1.12fr_0.88fr] lg:items-center lg:justify-normal lg:gap-0 lg:px-16 lg:pb-0 lg:pt-0">
-        <motion.div
-          initial={{ opacity: 0, x: -24, scale: 0.97 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative z-10 mt-4 flex w-full justify-center sm:mt-6 md:mt-8 lg:mt-0 lg:justify-start"
-        >
-          <img
-            src={heroGuy}
-            alt="Livreur Agrumen avec panier de produits frais"
-            className="-ml-[10vw] w-[120vw] max-w-none object-contain sm:-ml-4 sm:w-[90vw] md:ml-0 md:w-[680px] lg:-ml-20 lg:w-[760px] xl:w-[860px]"
-            width={1344}
-            height={896}
-          />
-        </motion.div>
+    <section className="relative overflow-hidden bg-inverse-surface">
+      {/* Courbe décorative en arrière-plan (style remotion.dev) */}
+      <svg
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+        viewBox="0 0 1440 900"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="heroCurve" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="hsl(var(--primary-container))" />
+            <stop offset="100%" stopColor="hsl(var(--primary))" />
+          </linearGradient>
+        </defs>
+        <motion.path
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 2, ease: "easeOut" }}
+          d="M -100 250 C 300 -50, 700 850, 1100 350 S 1700 100, 1600 600"
+          stroke="url(#heroCurve)"
+          strokeWidth="160"
+          strokeLinecap="round"
+          fill="none"
+          opacity="0.95"
+        />
+      </svg>
 
-        <motion.div
+      {/* Halo doux */}
+      <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_hsl(var(--inverse-surface)/0)_0%,_hsl(var(--inverse-surface)/0.6)_70%,_hsl(var(--inverse-surface))_100%)]" />
+
+      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-7xl flex-col items-center justify-center px-5 pb-16 pt-28 text-center sm:px-8 lg:pt-32">
+        <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.12, ease: "easeOut" }}
-          className="relative z-20 mt-4 flex w-full items-center justify-end sm:mt-6 md:mt-8 md:justify-center lg:mt-0 lg:justify-end"
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="font-headline text-[3.2rem] font-extrabold leading-[0.95] tracking-[-0.045em] text-inverse-on-surface sm:text-[4.5rem] md:text-[6rem] lg:text-[7.5rem] xl:text-[8.5rem]"
+          style={{ color: "hsl(var(--background))" }}
         >
-          <div className="w-[88%] max-w-[29rem] rounded-xl bg-primary px-5 py-6 shadow-2xl sm:w-[82%] sm:px-7 sm:py-7 md:w-full md:max-w-[34rem] md:px-10 md:py-10 lg:rounded-2xl lg:px-12 lg:py-14">
-            <h1 className="font-headline text-[2.15rem] font-extrabold leading-[0.9] tracking-[-0.055em] text-primary-foreground sm:text-[3rem] md:text-[4rem] lg:text-[5.2rem] xl:text-[5.8rem]">
-              <span className="block">Du Champ</span>
-              <span className="block">à Votre Table</span>
-            </h1>
+          <span className="block">Du Champ</span>
+          <span className="block">à Votre Table.</span>
+        </motion.h1>
 
-            <Link
-              to="/marche"
-              className="mt-5 inline-flex items-center gap-2 rounded-xl bg-background px-4 py-2.5 font-headline text-[12px] font-bold text-primary transition-all hover:opacity-90 active:scale-[0.97] sm:mt-6 sm:px-5 sm:py-3 sm:text-[13px] md:px-6 md:py-3.5 md:text-sm lg:mt-8 lg:px-8 lg:py-4"
-            >
-              Commander maintenant
-              <span className="material-symbols-outlined text-base sm:text-lg">arrow_forward</span>
-            </Link>
-          </div>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
+          className="mt-6 max-w-2xl font-body text-base text-inverse-on-surface/90 sm:text-lg md:mt-8 md:text-xl"
+          style={{ color: "hsl(var(--background) / 0.85)" }}
+        >
+          Des produits frais, locaux et de saison livrés directement
+          <br className="hidden sm:block" />
+          des producteurs sénégalais à votre porte.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
+          className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:mt-10 sm:gap-4"
+        >
+          <Link
+            to="/marche"
+            className="inline-flex items-center gap-2 rounded-full bg-primary-container px-6 py-3.5 font-headline text-sm font-bold text-primary-container-foreground shadow-lg transition-all hover:scale-[1.03] active:scale-[0.97] sm:px-8 sm:py-4 sm:text-base"
+          >
+            Commander maintenant
+            <span className="material-symbols-outlined text-lg">arrow_forward</span>
+          </Link>
+          <a
+            href="#mission"
+            className="inline-flex items-center gap-2 rounded-full border border-inverse-on-surface/30 bg-inverse-surface/40 px-6 py-3.5 font-headline text-sm font-bold text-inverse-on-surface backdrop-blur-sm transition-all hover:bg-inverse-surface/60 sm:px-8 sm:py-4 sm:text-base"
+            style={{ color: "hsl(var(--background))" }}
+          >
+            Notre mission
+          </a>
         </motion.div>
       </div>
     </section>
