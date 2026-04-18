@@ -69,7 +69,17 @@ export const AdminOrders = ({ orders, users, loading, onChange }: Props) => {
       .select("id, product_id, quantity, unit_price, products(name, image_url)")
       .eq("order_id", selected.id)
       .then(({ data }) => {
-        setItems((data ?? []) as OrderItemDetail[]);
+        const normalized: OrderItemDetail[] = (data ?? []).map((it) => {
+          const prod = Array.isArray(it.products) ? it.products[0] : it.products;
+          return {
+            id: it.id,
+            product_id: it.product_id,
+            quantity: it.quantity,
+            unit_price: Number(it.unit_price),
+            products: prod ? { name: prod.name, image_url: prod.image_url } : null,
+          };
+        });
+        setItems(normalized);
         setLoadingItems(false);
       });
   }, [selected]);
