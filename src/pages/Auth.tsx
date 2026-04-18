@@ -8,12 +8,12 @@ import heroBg from "@/assets/hero-bg.jpg";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
-  const defaultRole = searchParams.get("role") === "seller" ? "seller" : "buyer";
-  const [isLogin, setIsLogin] = useState(defaultRole === "buyer");
+  const defaultRole: "buyer" | "seller" = "buyer";
+  const [isLogin, setIsLogin] = useState(searchParams.get("mode") !== "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState<"buyer" | "seller">(defaultRole);
+  const [role] = useState<"buyer" | "seller">(defaultRole);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { signUp } = useAuth();
@@ -27,9 +27,9 @@ const Auth = () => {
         const { data } = await supabase.auth.signInWithPassword({ email, password });
         if (data.user) {
           const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
-          const userRole = roles?.[0]?.role;
+          const isAdmin = roles?.some((r) => r.role === "admin");
           toast.success("Connexion réussie !");
-          navigate(userRole === "seller" ? "/dashboard" : "/marche");
+          navigate(isAdmin ? "/admin" : "/marche");
         }
       } else {
         await signUp(email, password, fullName, role);
@@ -103,35 +103,7 @@ const Auth = () => {
               </p>
             </div>
 
-            {/* Role selector (signup only) */}
-            {!isLogin && (
-              <div className="flex gap-2 mb-6">
-                <button
-                  type="button"
-                  onClick={() => setRole("buyer")}
-                  className={`flex-1 py-3.5 rounded-2xl font-headline font-bold text-sm flex items-center justify-center gap-2 transition-all border ${
-                    role === "buyer"
-                      ? "bg-primary-container text-primary-container-foreground border-primary-container shadow-sm"
-                      : "bg-transparent text-on-surface-variant border-border/40 hover:border-border"
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-lg">shopping_bag</span>
-                  Acheteur
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRole("seller")}
-                  className={`flex-1 py-3.5 rounded-2xl font-headline font-bold text-sm flex items-center justify-center gap-2 transition-all border ${
-                    role === "seller"
-                      ? "bg-primary-container text-primary-container-foreground border-primary-container shadow-sm"
-                      : "bg-transparent text-on-surface-variant border-border/40 hover:border-border"
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-lg">storefront</span>
-                  Vendeur
-                </button>
-              </div>
-            )}
+            {/* Role selector removed — Agrumen vend tout, tous les utilisateurs sont acheteurs */}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
