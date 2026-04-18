@@ -228,6 +228,12 @@ const Navbar = () => {
                               Mes Commandes
                             </Link>
                           )}
+                          {role === "admin" && (
+                            <Link to="/admin" className="flex items-center gap-3 px-4 py-2.5 text-[13px] text-primary hover:bg-primary/5 transition-colors">
+                              <span className="material-symbols-outlined text-lg">shield_person</span>
+                              Administration
+                            </Link>
+                          )}
                         </div>
                         <div className="border-t border-border/20 py-1">
                           <button
@@ -337,6 +343,12 @@ const Navbar = () => {
                       <Link to="/mes-commandes" className="flex items-center gap-3 px-3 py-3 rounded-xl text-[13px] font-medium text-on-surface-variant hover:text-foreground hover:bg-surface-container/50 transition-colors">
                         <span className="material-symbols-outlined text-lg">receipt_long</span>
                         Mes Commandes
+                      </Link>
+                    )}
+                    {role === "admin" && (
+                      <Link to="/admin" className="flex items-center gap-3 px-3 py-3 rounded-xl text-[13px] font-medium text-primary hover:bg-primary/5 transition-colors">
+                        <span className="material-symbols-outlined text-lg">shield_person</span>
+                        Administration
                       </Link>
                     )}
                   </div>

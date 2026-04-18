@@ -3,11 +3,13 @@ import { motion } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 
-const navItems = [
+const baseNavItems = [
   { path: "/marche", icon: "storefront", label: "Marché" },
   { path: "__cart__", icon: "shopping_cart", label: "Panier" },
   { path: "__profile__", icon: "person", label: "Profil" },
 ];
+
+const adminNavItem = { path: "/admin", icon: "shield_person", label: "Admin" };
 
 const BottomNav = () => {
   const location = useLocation();
@@ -20,6 +22,8 @@ const BottomNav = () => {
 
   const getProfilePath = () => (user ? (role === "seller" ? "/dashboard" : "/mon-compte") : "/auth");
   const isProfileActive = isActive("/mon-compte") || isActive("/auth");
+
+  const navItems = role === "admin" ? [...baseNavItems, adminNavItem] : baseNavItems;
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden">

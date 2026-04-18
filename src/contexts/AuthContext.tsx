@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  role: "buyer" | "seller" | null;
+  role: "buyer" | "seller" | "admin" | null;
   profile: { full_name: string; phone: string | null; avatar_url: string | null; city: string | null } | null;
   signUp: (email: string, password: string, fullName: string, role: "buyer" | "seller") => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
@@ -25,7 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [role, setRole] = useState<"buyer" | "seller" | null>(null);
+  const [role, setRole] = useState<"buyer" | "seller" | "admin" | null>(null);
   const [profile, setProfile] = useState<AuthContextType["profile"]>(null);
 
   const fetchUserData = async (userId: string) => {
@@ -34,7 +34,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       supabase.from("profiles").select("full_name, phone, avatar_url, city").eq("user_id", userId).single(),
     ]);
     if (roles && roles.length > 0) {
-      setRole(roles[0].role as "buyer" | "seller");
+      // Prioritize admin role if user has multiple roles
+      const adminRole = roles.find((r) => r.role === "admin");
+      setRole((adminRole?.role ?? roles[0].role) as "buyer" | "seller" | "admin");
     }
     if (prof) setProfile(prof);
   };
