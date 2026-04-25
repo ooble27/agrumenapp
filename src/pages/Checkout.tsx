@@ -35,7 +35,7 @@ const Checkout = () => {
     if (profile?.full_name) setFullName(profile.full_name);
     if (profile?.phone) setPhone(profile.phone);
     if (profile?.city) setCity(profile.city);
-    if (profile?.address) setAddress(profile.address);
+    if ((profile as any)?.address) setAddress((profile as any).address);
   }, [profile]);
 
   if (authLoading || !user || items.length === 0) return null;
