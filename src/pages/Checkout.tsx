@@ -152,7 +152,7 @@ const Checkout = () => {
                   <button
                     onClick={() => setStep(2)}
                     disabled={!canProceedStep1}
-                    className="w-full bg-primary text-primary-foreground py-4 rounded-full font-headline font-extrabold text-base hover:scale-[0.97] active:scale-95 transition-transform disabled:opacity-40 shadow-lg flex items-center justify-center gap-2"
+                    className="w-full bg-foreground text-background py-4 rounded-md font-headline font-extrabold text-base hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-40 shadow-lg flex items-center justify-center gap-2"
                   >
                     Continuer
                     <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -182,15 +182,15 @@ const Checkout = () => {
                       <button
                         type="button"
                         onClick={() => setPaymentMethod("wave")}
-                        className={`relative p-5 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 ${
+                        className={`relative p-5 rounded-md border-2 transition-all flex flex-col items-center gap-3 ${
                           paymentMethod === "wave"
-                            ? "border-primary bg-primary/5 shadow-md"
+                            ? "border-foreground bg-foreground/5 shadow-md"
                             : "border-border/30 hover:border-border"
                         }`}
                       >
                         {paymentMethod === "wave" && (
-                          <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                            <span className="material-symbols-outlined text-primary-foreground text-xs">check</span>
+                          <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-foreground flex items-center justify-center">
+                            <span className="material-symbols-outlined text-background text-xs">check</span>
                           </div>
                         )}
                         <img src={waveLogo} alt="Wave" className="w-12 h-12 rounded-xl object-cover" />
@@ -199,15 +199,15 @@ const Checkout = () => {
                       <button
                         type="button"
                         onClick={() => setPaymentMethod("orange_money")}
-                        className={`relative p-5 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 ${
+                        className={`relative p-5 rounded-md border-2 transition-all flex flex-col items-center gap-3 ${
                           paymentMethod === "orange_money"
-                            ? "border-primary bg-primary/5 shadow-md"
+                            ? "border-foreground bg-foreground/5 shadow-md"
                             : "border-border/30 hover:border-border"
                         }`}
                       >
                         {paymentMethod === "orange_money" && (
-                          <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                            <span className="material-symbols-outlined text-primary-foreground text-xs">check</span>
+                          <div className="absolute top-2.5 right-2.5 w-5 h-5 rounded-full bg-foreground flex items-center justify-center">
+                            <span className="material-symbols-outlined text-background text-xs">check</span>
                           </div>
                         )}
                         <img src={orangeMoneyLogo} alt="Orange Money" className="w-12 h-12 rounded-xl object-cover" />
@@ -225,7 +225,7 @@ const Checkout = () => {
 
                   <button
                     onClick={() => setStep(3)}
-                    className="w-full bg-primary text-primary-foreground py-4 rounded-full font-headline font-extrabold text-base hover:scale-[0.97] active:scale-95 transition-transform shadow-lg flex items-center justify-center gap-2"
+                    className="w-full bg-foreground text-background py-4 rounded-md font-headline font-extrabold text-base hover:opacity-90 active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2"
                   >
                     Vérifier la commande
                     <span className="material-symbols-outlined text-lg">arrow_forward</span>
@@ -300,7 +300,7 @@ const Checkout = () => {
                   <button
                     onClick={handleOrder}
                     disabled={loading}
-                    className="w-full bg-primary text-primary-foreground py-4 rounded-full font-headline font-extrabold text-base hover:scale-[0.97] active:scale-95 transition-transform disabled:opacity-50 shadow-xl flex items-center justify-center gap-2"
+                    className="w-full bg-foreground text-background py-4 rounded-md font-headline font-extrabold text-base hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 shadow-xl flex items-center justify-center gap-2"
                   >
                     {loading ? (
                       <>
