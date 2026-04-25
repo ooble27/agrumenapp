@@ -45,7 +45,7 @@ const CartDrawer = () => {
             <p className="text-on-surface-variant text-sm mb-6">Découvrez nos produits frais du terroir sénégalais.</p>
             <button
               onClick={() => setIsOpen(false)}
-              className="bg-primary-container text-primary-container-foreground px-6 py-3 rounded-full font-headline font-bold text-sm hover:scale-95 transition-transform"
+              className="bg-foreground text-background px-6 py-3 rounded-md font-headline font-bold text-sm hover:opacity-90 active:scale-[0.98] transition-all"
             >
               Explorer le Marché
             </button>
@@ -61,9 +61,9 @@ const CartDrawer = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="flex gap-4 bg-surface-container-lowest rounded-xl p-4"
+                    className="flex gap-4 bg-surface-container-lowest rounded-md p-4"
                   >
-                    <img src={item.image} alt={item.name} className="w-20 h-20 rounded-lg object-cover flex-shrink-0" />
+                    <img src={item.image} alt={item.name} className="w-20 h-20 rounded-md object-cover flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <h4 className="font-headline font-extrabold text-sm truncate">{item.name}</h4>
                       <p className="text-xs text-on-surface-variant">{item.farmer}</p>
@@ -117,7 +117,7 @@ const CartDrawer = () => {
 
               <button
                 onClick={handleCheckout}
-                className="w-full bg-primary-container text-primary-container-foreground py-4 rounded-full font-headline font-extrabold text-lg flex items-center justify-center gap-3 hover:scale-[0.97] transition-transform shadow-xl"
+                className="w-full bg-foreground text-background py-4 rounded-md font-headline font-extrabold text-lg flex items-center justify-center gap-3 hover:opacity-90 active:scale-[0.98] transition-all shadow-xl"
               >
                 <span className="material-symbols-outlined">shopping_cart_checkout</span>
                 Commander
