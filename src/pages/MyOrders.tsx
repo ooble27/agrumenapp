@@ -44,7 +44,7 @@ const MyOrders = () => {
             <span className="material-symbols-outlined text-5xl text-on-surface-variant/40 mb-4">receipt_long</span>
             <p className="font-headline font-bold text-lg mb-2">Aucune commande</p>
             <p className="text-on-surface-variant text-sm mb-6">Vos commandes apparaîtront ici.</p>
-            <Link to="/" className="inline-block bg-primary-container text-primary-container-foreground px-6 py-3 rounded-full font-headline font-bold text-sm hover:scale-95 transition-transform">
+            <Link to="/" className="inline-block bg-foreground text-background px-6 py-3 rounded-md font-headline font-bold text-sm hover:opacity-90 active:scale-[0.98] transition-all">
               Découvrir le Marché
             </Link>
           </div>
@@ -58,7 +58,7 @@ const MyOrders = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="bg-card rounded-2xl p-5 md:p-6 border border-border/30"
+                  className="bg-card rounded-md p-5 md:p-6 border border-border/30"
                 >
                   <div className="flex flex-col sm:flex-row justify-between gap-3">
                     <div>
