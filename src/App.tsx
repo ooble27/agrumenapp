@@ -9,6 +9,9 @@ import SellerDashboard from "./pages/SellerDashboard";
 import ProductDetail from "./pages/ProductDetail";
 import Auth from "./pages/Auth";
 import Checkout from "./pages/Checkout";
+import CheckoutReview from "./pages/CheckoutReview";
+import CheckoutConfirmation from "./pages/CheckoutConfirmation";
+import CheckoutTracking from "./pages/CheckoutTracking";
 import MyOrders from "./pages/MyOrders";
 import BuyerAccount from "./pages/BuyerAccount";
 import Marche from "./pages/Marche";
@@ -33,6 +36,9 @@ const AnimatedRoutes = () => {
         <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
         <Route path="/produit/:id" element={<PageTransition><ProductDetail /></PageTransition>} />
         <Route path="/checkout" element={<PageTransition><Checkout /></PageTransition>} />
+        <Route path="/checkout/review" element={<PageTransition><CheckoutReview /></PageTransition>} />
+        <Route path="/checkout/confirmation/:id" element={<PageTransition><CheckoutConfirmation /></PageTransition>} />
+        <Route path="/checkout/tracking/:id" element={<PageTransition><CheckoutTracking /></PageTransition>} />
         <Route path="/mes-commandes" element={<PageTransition><MyOrders /></PageTransition>} />
         <Route path="/mon-compte" element={<PageTransition><BuyerAccount /></PageTransition>} />
         <Route path="/admin" element={<PageTransition><AdminDashboard /></PageTransition>} />
