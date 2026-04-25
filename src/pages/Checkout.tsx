@@ -107,7 +107,7 @@ const Checkout = () => {
                   transition={{ duration: 0.25 }}
                   className="space-y-4"
                 >
-                  <div className="bg-surface-container-lowest rounded-2xl p-5 space-y-4 border border-border/30">
+                  <div className="bg-surface-container-lowest rounded-md p-5 space-y-4 border border-border/30">
                     <div className="flex items-center gap-3 mb-1">
                       <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
                         <span className="material-symbols-outlined text-primary text-lg">location_on</span>
@@ -121,7 +121,7 @@ const Checkout = () => {
                         value={address}
                         onChange={e => setAddress(e.target.value)}
                         placeholder="Ex: Sacré Cœur 3, Villa 123"
-                        className="w-full bg-surface-container-low rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-primary/30 text-sm font-body border border-border/20"
+                        className="w-full bg-surface-container-low rounded-md px-4 py-3.5 outline-none focus:ring-2 focus:ring-primary/30 text-sm font-body border border-border/20"
                       />
                     </div>
 
@@ -131,7 +131,7 @@ const Checkout = () => {
                         <select
                           value={city}
                           onChange={e => setCity(e.target.value)}
-                          className="w-full bg-surface-container-low rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-primary/30 text-sm font-body border border-border/20 appearance-none"
+                          className="w-full bg-surface-container-low rounded-md px-4 py-3.5 outline-none focus:ring-2 focus:ring-primary/30 text-sm font-body border border-border/20 appearance-none"
                         >
                           {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
@@ -143,7 +143,7 @@ const Checkout = () => {
                           onChange={e => setPhone(e.target.value)}
                           placeholder="77 000 00 00"
                           type="tel"
-                          className="w-full bg-surface-container-low rounded-xl px-4 py-3.5 outline-none focus:ring-2 focus:ring-primary/30 text-sm font-body border border-border/20"
+                          className="w-full bg-surface-container-low rounded-md px-4 py-3.5 outline-none focus:ring-2 focus:ring-primary/30 text-sm font-body border border-border/20"
                         />
                       </div>
                     </div>
@@ -170,7 +170,7 @@ const Checkout = () => {
                   transition={{ duration: 0.25 }}
                   className="space-y-4"
                 >
-                  <div className="bg-surface-container-lowest rounded-2xl p-5 space-y-5 border border-border/30">
+                  <div className="bg-surface-container-lowest rounded-md p-5 space-y-5 border border-border/30">
                     <div className="flex items-center gap-3 mb-1">
                       <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
                         <span className="material-symbols-outlined text-primary text-lg">payments</span>
@@ -193,7 +193,7 @@ const Checkout = () => {
                             <span className="material-symbols-outlined text-background text-xs">check</span>
                           </div>
                         )}
-                        <img src={waveLogo} alt="Wave" className="w-12 h-12 rounded-xl object-cover" />
+                        <img src={waveLogo} alt="Wave" className="w-12 h-12 rounded-md object-cover" />
                         <span className="font-headline font-bold text-sm">Wave</span>
                       </button>
                       <button
@@ -210,12 +210,12 @@ const Checkout = () => {
                             <span className="material-symbols-outlined text-background text-xs">check</span>
                           </div>
                         )}
-                        <img src={orangeMoneyLogo} alt="Orange Money" className="w-12 h-12 rounded-xl object-cover" />
+                        <img src={orangeMoneyLogo} alt="Orange Money" className="w-12 h-12 rounded-md object-cover" />
                         <span className="font-headline font-bold text-sm">Orange Money</span>
                       </button>
                     </div>
 
-                    <div className="flex items-start gap-2.5 bg-primary/5 rounded-xl p-3.5">
+                    <div className="flex items-start gap-2.5 bg-primary/5 rounded-md p-3.5">
                       <span className="material-symbols-outlined text-primary text-lg mt-0.5">info</span>
                       <p className="text-xs text-on-surface-variant leading-relaxed">
                         Après confirmation, vous recevrez une notification {paymentMethod === "wave" ? "Wave" : "Orange Money"} pour valider le paiement de <strong className="text-foreground">{formatPrice(totalPrice)}</strong>.
@@ -244,7 +244,7 @@ const Checkout = () => {
                   className="space-y-4"
                 >
                   {/* Delivery summary */}
-                  <div className="bg-surface-container-lowest rounded-2xl p-5 border border-border/30">
+                  <div className="bg-surface-container-lowest rounded-md p-5 border border-border/30">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined text-primary text-lg">location_on</span>
@@ -259,7 +259,7 @@ const Checkout = () => {
                   </div>
 
                   {/* Payment summary */}
-                  <div className="bg-surface-container-lowest rounded-2xl p-5 border border-border/30">
+                  <div className="bg-surface-container-lowest rounded-md p-5 border border-border/30">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined text-primary text-lg">payments</span>
@@ -278,7 +278,7 @@ const Checkout = () => {
                   </div>
 
                   {/* Items */}
-                  <div className="bg-surface-container-lowest rounded-2xl p-5 border border-border/30">
+                  <div className="bg-surface-container-lowest rounded-md p-5 border border-border/30">
                     <h3 className="font-headline font-bold text-sm mb-3 flex items-center gap-2">
                       <span className="material-symbols-outlined text-primary text-lg">shopping_basket</span>
                       Articles ({items.length})
@@ -321,7 +321,7 @@ const Checkout = () => {
 
           {/* Right: Order summary (desktop) */}
           <div className="hidden lg:block lg:col-span-2">
-            <div className="bg-surface-container-lowest rounded-2xl p-5 border border-border/30 sticky top-24">
+            <div className="bg-surface-container-lowest rounded-md p-5 border border-border/30 sticky top-24">
               <h2 className="font-headline font-extrabold text-base mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-lg">receipt_long</span>
                 Récapitulatif
@@ -329,7 +329,7 @@ const Checkout = () => {
               <div className="space-y-3 mb-5">
                 {items.map(item => (
                   <div key={item.id} className="flex gap-3">
-                    <img src={item.image} alt={item.name} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
+                    <img src={item.image} alt={item.name} className="w-14 h-14 rounded-md object-cover flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{item.name}</p>
                       <p className="text-xs text-on-surface-variant">{item.farmer} • × {item.quantity}</p>
